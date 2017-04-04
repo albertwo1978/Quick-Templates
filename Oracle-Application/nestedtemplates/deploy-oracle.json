@@ -1,0 +1,192 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "availabilitySets_OracleAS_name": {
+      "defaultValue": "OracleAS",
+      "type": "String"
+    },
+    "disks_OracleDB1_name": {
+      "defaultValue": "OracleDB1",
+      "type": "String"
+    },
+    "virtualMachines_OracleDB1_name": {
+      "defaultValue": "OracleDB1",
+      "type": "String"
+    },
+    "networkInterfaces_oracledb1249_name": {
+      "defaultValue": "oracledb1249",
+      "type": "String"
+    },
+    "networkSecurityGroups_OracleDB1_nsg_name": {
+      "defaultValue": "OracleDB1-nsg",
+      "type": "String"
+    },
+    "publicIPAddresses_OracleDB1_ip_name": {
+      "defaultValue": "OracleDB1-ip",
+      "type": "String"
+    },
+    "virtualNetworks_OracleEnv_vNet_name": {
+      "defaultValue": "OracleEnv-vNet",
+      "type": "String"
+    },
+    "storageAccounts_demooraclediagsto_name": {
+      "defaultValue": "demooraclediagsto",
+      "type": "String"
+    }
+  },
+  "variables": { },
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-OracleEnv/providers/Microsoft.Compute/availabilitySets/OracleAS'.",
+            "type": "Microsoft.Compute/availabilitySets",
+            "sku": {
+                "name": "Aligned"
+            },
+            "name": "[parameters('availabilitySets_OracleAS_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "eastus2",
+            "properties": {
+                "platformUpdateDomainCount": 5,
+                "platformFaultDomainCount": 2,
+                "virtualMachines": [
+                    {
+                        "id": "[resourceId('Microsoft.Compute/virtualMachines', parameters('virtualMachines_OracleDB1_name'))]"
+                    }
+                ]
+            },
+            "dependsOn": [ ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-OracleEnv/providers/Microsoft.Compute/virtualMachines/OracleDB1'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_OracleDB1_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "eastus2",
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_OracleAS_name'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Oracle",
+                        "offer": "Oracle-Database-Se",
+                        "sku": "12.1.0.2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[parameters('virtualMachines_OracleDB1_name')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        },
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_OracleDB1_name')]",
+                    "adminUsername": "dxadmin",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_oracledb1249_name'))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "[concat('https', '://', parameters('storageAccounts_demooraclediagsto_name'), '.blob.core.windows.net', '/')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_OracleAS_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_oracledb1249_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-OracleEnv/providers/Microsoft.Network/networkInterfaces/oracledb1249'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_oracledb1249_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus2",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.0.3.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_OracleDB1_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_OracleEnv_vNet_name')), '/subnets/DataTier')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_OracleDB1_nsg_name'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_OracleDB1_ip_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_OracleDB1_nsg_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-OracleEnv/providers/Microsoft.Network/networkSecurityGroups/OracleDB1-nsg'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_OracleDB1_nsg_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus2",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-ssh",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-OracleEnv/providers/Microsoft.Network/publicIPAddresses/OracleDB1-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_OracleDB1_ip_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus2",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        }
+    ]
+}
