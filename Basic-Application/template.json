@@ -1,0 +1,199 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "disks_app_vm_name": {
+            "defaultValue": "app-vm",
+            "type": "String"
+        },
+        "virtualMachines_app_vm_name": {
+            "defaultValue": "app-vm",
+            "type": "String"
+        },
+        "networkInterfaces_app_vm538_name": {
+            "defaultValue": "app-vm538",
+            "type": "String"
+        },
+        "networkSecurityGroups_app_vm_nsg_name": {
+            "defaultValue": "app-vm-nsg",
+            "type": "String"
+        },
+        "publicIPAddresses_app_vm_ip_name": {
+            "defaultValue": "app-vm-ip",
+            "type": "String"
+        },
+        "virtualNetworks_Demo_ResourceDeployment_vnet_name": {
+            "defaultValue": "Demo-ResourceDeployment-vnet",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-ResourceDeployment/providers/Microsoft.Compute/disks/app-vm'.",
+            "type": "Microsoft.Compute/disks",
+            "name": "[parameters('disks_app_vm_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "eastus2",
+            "properties": {
+                "accountType": "Premium_LRS",
+                "osType": "Windows",
+                "creationData": {
+                    "createOption": "FromImage",
+                    "imageReference": {
+                        "id": "/Subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/Providers/Microsoft.Compute/Locations/eastus2/Publishers/MicrosoftWindowsServer/ArtifactTypes/VMImage/Offers/WindowsServer/Skus/2016-Datacenter/Versions/latest"
+                    }
+                },
+                "diskSizeGB": 128
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-ResourceDeployment/providers/Microsoft.Compute/virtualMachines/app-vm'.",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[parameters('virtualMachines_app_vm_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "eastus2",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[parameters('virtualMachines_app_vm_name')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks', parameters('disks_app_vm_name'))]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_app_vm_name')]",
+                    "adminUsername": "dxadmin",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_app_vm538_name'))]"
+                        }
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/disks', parameters('disks_app_vm_name'))]",
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_app_vm538_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-ResourceDeployment/providers/Microsoft.Network/networkInterfaces/app-vm538'.",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[parameters('networkInterfaces_app_vm538_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus2",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIPAddress": "10.0.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_app_vm_ip_name'))]"
+                            },
+                            "subnet": {
+                                "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Demo_ResourceDeployment_vnet_name')), '/subnets/default')]"
+                            }
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableIPForwarding": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_app_vm_nsg_name'))]"
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_app_vm_ip_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_Demo_ResourceDeployment_vnet_name'))]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_app_vm_nsg_name'))]"
+            ]
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-ResourceDeployment/providers/Microsoft.Network/networkSecurityGroups/app-vm-nsg'.",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[parameters('networkSecurityGroups_app_vm_nsg_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus2",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "3389",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 1000,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-ResourceDeployment/providers/Microsoft.Network/publicIPAddresses/app-vm-ip'.",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_app_vm_ip_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus2",
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4
+            },
+            "dependsOn": []
+        },
+        {
+            "comments": "Generalized from resource: '/subscriptions/af6f3817-cbbe-4afa-ba17-ed7224fe70bc/resourceGroups/Demo-ResourceDeployment/providers/Microsoft.Network/virtualNetworks/Demo-ResourceDeployment-vnet'.",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_Demo_ResourceDeployment_vnet_name')]",
+            "apiVersion": "2016-03-30",
+            "location": "eastus2",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/24"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24"
+                        }
+                    }
+                ]
+            },
+            "dependsOn": []
+        }
+    ]
+}
