@@ -50,10 +50,12 @@
       "type": "String"
     },
     "virtualNetworks_OracleEnv_vNet_name": {
-      "value": "[parameters('virtualNetworks_OracleEnv_vNet_name')]"
+      "defaultValue": "OracleEnv-vNet",
+      "type": "String"
     },
     "storageAccounts_demooraclediagsto_name": {
-      "value": "[parameters('storageAccounts_demooraclediagsto_name')]"
+      "defaultValue": "demooraclediagsto",
+      "type": "String"
     }
   },
   "variables": { },
