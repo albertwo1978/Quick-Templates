@@ -136,8 +136,7 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_ClientAS_name'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client1495_name'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_demooraclediagsto_name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client1495_name'))]"
             ]
         },
         {
@@ -193,8 +192,7 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySets_ClientAS_name'))]",
-                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client2298_name'))]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_demooraclediagsto_name'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_client2298_name'))]"
             ]
         },
         {
@@ -229,7 +227,6 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_Client1_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_OracleEnv_vNet_name'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_Client1_nsg_name'))]"
             ]
         },
@@ -265,7 +262,6 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_Client2_ip_name'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_OracleEnv_vNet_name'))]",
                 "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_Client2_nsg_name'))]"
             ]
         },
