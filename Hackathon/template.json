@@ -1,0 +1,85 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of resources that the script is dependent on such as linked templates and DSC modules"
+      },
+      "defaultValue": "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Hackathon"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+      },
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "deployOracleTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-vnet.json',parameters('_artifactsLocationSasToken'))]",
+    "deployClientTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]"
+  },
+    "resources": [
+        {
+          "name": "deployClients",
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2015-01-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Resources/deployments', 'deployOracle')]"
+          ],
+          "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[variables('deployClientTemplateURL')]",
+              "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+              "adminPassword": {
+                "value": "[parameters('adminPassword')]"
+              },
+              "availabilitySets_ClientAS_name": {
+                "value": "[parameters('availabilitySets_ClientAS_name')]"
+              },
+              "disks_Client1_name": {
+                "value": "[parameters('disks_Client1_name')]"
+              },
+              "disks_Client2_name": {
+                "value": "[parameters('disks_Client2_name')]"
+              },
+              "virtualMachines_Client1_name": {
+                "value": "[parameters('virtualMachines_Client1_name')]"
+              },
+              "virtualMachines_Client2_name": {
+                "value": "[parameters('virtualMachines_Client2_name')]"
+              },
+              "networkInterfaces_client1495_name": {
+                "value": "[parameters('networkInterfaces_client1495_name')]"
+              },
+              "networkInterfaces_client2298_name": {
+                "value": "[parameters('networkInterfaces_client2298_name')]"
+              },
+              "networkSecurityGroups_Client1_nsg_name": {
+                "value": "[parameters('networkSecurityGroups_Client1_nsg_name')]"
+              },
+              "networkSecurityGroups_Client2_nsg_name": {
+                "value": "[parameters('networkSecurityGroups_Client2_nsg_name')]"
+              },
+              "publicIPAddresses_Client1_ip_name": {
+                "value": "[parameters('publicIPAddresses_Client1_ip_name')]"
+              },
+              "publicIPAddresses_Client2_ip_name": {
+                "value": "[parameters('publicIPAddresses_Client2_ip_name')]"
+              },
+              "virtualNetworks_OracleEnv_vNet_name": {
+                "value": "[parameters('virtualNetworks_OracleEnv_vNet_name')]"
+              },
+              "storageAccounts_demooraclediagsto_name": {
+                "value": "[parameters('storageAccounts_demooraclediagsto_name')]"
+              }
+            }
+          }
+        }
+    ]
+}
