@@ -61,7 +61,8 @@
   },
   "variables": {
     "deployVnetTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-vnet.json',parameters('_artifactsLocationSasToken'))]",
-    "deployHAProxyTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]"
+    "deployHAProxyTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]",
+    "deployHAScriptURL": "[concat(parameters('_artifactsLocation'),'/scripts/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]"
   },
   "resources": [
     {
