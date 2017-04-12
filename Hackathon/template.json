@@ -91,7 +91,7 @@
           "subnet2Prefix": {
             "value": "[parameters('subnet2Prefix')]"
           },
-          "subnet2Prefix": {
+          "subnet2Name": {
             "value": "[parameters('subnet2Name')]"
           }
         }
