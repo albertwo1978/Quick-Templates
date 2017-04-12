@@ -2,6 +2,48 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
   "parameters": {
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "HackNet",
+      "metadata": {
+        "description": "Vnet Name"
+      }
+    },
+    "vnetAddressPrefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/16",
+      "metadata": {
+        "description": "Vnet Address Prefix"
+      }
+    },
+    "subnet1Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+        "description": "Subnet 1 Prefix"
+      }
+    },
+    "subnet1Name": {
+      "type": "string",
+      "defaultValue": "data-tier",
+      "metadata": {
+        "description": "Subnet 1 Name"
+      }
+    },
+    "subnet2Prefix": {
+      "type": "string",
+      "defaultValue": "10.0.0.0/24",
+      "metadata": {
+        "description": "Subnet 2 Prefix"
+      }
+    },
+    "subnet2Name": {
+      "type": "string",
+      "defaultValue": "app-tier",
+      "metadata": {
+        "description": "Subnet 2 Name"
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -18,68 +60,41 @@
     }
   },
   "variables": {
-    "deployOracleTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-vnet.json',parameters('_artifactsLocationSasToken'))]",
-    "deployClientTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]"
+    "deployVnetTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-vnet.json',parameters('_artifactsLocationSasToken'))]",
+    "deployHAProxyTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]"
   },
     "resources": [
         {
-          "name": "deployClients",
+          "name": "deployVnet",
           "type": "Microsoft.Resources/deployments",
           "apiVersion": "2015-01-01",
-          "dependsOn": [
-            "[resourceId('Microsoft.Resources/deployments', 'deployOracle')]"
-          ],
+          "dependsOn": [ ],
           "properties": {
             "mode": "Incremental",
             "templateLink": {
-              "uri": "[variables('deployClientTemplateURL')]",
+              "uri": "[variables('deployVnetTemplateURL')]",
               "contentVersion": "1.0.0.0"
             },
             "parameters": {
-              "adminPassword": {
-                "value": "[parameters('adminPassword')]"
+              "vnetName": {
+                "value": "[parameters('vnetName')]"
               },
-              "availabilitySets_ClientAS_name": {
-                "value": "[parameters('availabilitySets_ClientAS_name')]"
+              "vnetAddressPrefix": {
+                "value": "[parameters('vnetAddressPrefix')]"
               },
-              "disks_Client1_name": {
-                "value": "[parameters('disks_Client1_name')]"
+              "subnet1Prefix": {
+                "value": "[parameters('subnet1Prefix')]"
               },
-              "disks_Client2_name": {
-                "value": "[parameters('disks_Client2_name')]"
+              "subnet1Name": {
+                "value": "[parameters('subnet1Name')]"
               },
-              "virtualMachines_Client1_name": {
-                "value": "[parameters('virtualMachines_Client1_name')]"
+              "subnet2Prefix": {
+                "value": "[parameters('subnet2Prefix')]"
               },
-              "virtualMachines_Client2_name": {
-                "value": "[parameters('virtualMachines_Client2_name')]"
-              },
-              "networkInterfaces_client1495_name": {
-                "value": "[parameters('networkInterfaces_client1495_name')]"
-              },
-              "networkInterfaces_client2298_name": {
-                "value": "[parameters('networkInterfaces_client2298_name')]"
-              },
-              "networkSecurityGroups_Client1_nsg_name": {
-                "value": "[parameters('networkSecurityGroups_Client1_nsg_name')]"
-              },
-              "networkSecurityGroups_Client2_nsg_name": {
-                "value": "[parameters('networkSecurityGroups_Client2_nsg_name')]"
-              },
-              "publicIPAddresses_Client1_ip_name": {
-                "value": "[parameters('publicIPAddresses_Client1_ip_name')]"
-              },
-              "publicIPAddresses_Client2_ip_name": {
-                "value": "[parameters('publicIPAddresses_Client2_ip_name')]"
-              },
-              "virtualNetworks_OracleEnv_vNet_name": {
-                "value": "[parameters('virtualNetworks_OracleEnv_vNet_name')]"
-              },
-              "storageAccounts_demooraclediagsto_name": {
-                "value": "[parameters('storageAccounts_demooraclediagsto_name')]"
+              "subnet2Prefix": {
+                "value": "[parameters('subnet2Name')]"
               }
             }
-          }
         }
     ]
 }
