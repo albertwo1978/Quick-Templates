@@ -53,7 +53,7 @@
     "nicName": "eth0",
     "vhdStorageType": "Premium_LRS",
     "vhdStorageContainerName": "vhds",
-    "vmName": "MyUbuntuVM",
+    "vmName": "dnalb01",
     "vmSize": "Standard_DS1_v2",
     "vhdStorageAccountName": "[concat('vhdstorage', uniqueString(resourceGroup().id))]",
     "diagnosticsStorageAccountName": "[variables('vhdStorageAccountName')]",
