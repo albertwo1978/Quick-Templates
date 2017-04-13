@@ -3,7 +3,7 @@ Configuration WebServerConfig
 {
 Import-DscResource -ModuleName PSDesiredStateConfiguration
 
-Node $nodeName
+Node localhost
   {
     WindowsFeature WebServerRole
     {
