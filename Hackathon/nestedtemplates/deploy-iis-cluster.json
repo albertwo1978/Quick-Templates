@@ -73,7 +73,7 @@
     "webSrvAvailabilitySetName": "[concat(parameters('envPrefixName'), 'webSrvAS')]",
     "webSrvNumbOfInstances": "[parameters('numberOfWebSrvs')]",
     "vmExtensionName": "dscExtension",
-    "modulesUrl": "https: //raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Hackathon/scripts/WebServerConfig.ps1.zip",
+    "modulesUrl": "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Hackathon/scripts/WebServerConfig.ps1.zip",
     "configurationFunction": "WebServerConfig.ps1\\WebServerConfig"
   },
   "resources": [
