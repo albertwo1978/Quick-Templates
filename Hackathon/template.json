@@ -61,7 +61,7 @@
   },
   "variables": {
     "deployVnetTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-vnet.json',parameters('_artifactsLocationSasToken'))]",
-    "deployHAProxyTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]",
+    "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]",
     "deployHAScriptURL": "[concat(parameters('_artifactsLocation'),'/scripts/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]"
   },
   "resources": [
@@ -74,6 +74,39 @@
         "mode": "Incremental",
         "templateLink": {
           "uri": "[variables('deployVnetTemplateURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('vnetName')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('vnetAddressPrefix')]"
+          },
+          "subnet1Prefix": {
+            "value": "[parameters('subnet1Prefix')]"
+          },
+          "subnet1Name": {
+            "value": "[parameters('subnet1Name')]"
+          },
+          "subnet2Prefix": {
+            "value": "[parameters('subnet2Prefix')]"
+          },
+          "subnet2Name": {
+            "value": "[parameters('subnet2Name')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "deploy-app-tier",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ "[resourceId('Microsoft.Resources/deployments', 'deployVnet')]" ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('deployAppTierTemplateURL')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
