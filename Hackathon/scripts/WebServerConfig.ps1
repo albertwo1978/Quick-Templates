@@ -1,9 +1,6 @@
-Configuration InstallIIS
+Configuration WebServerConfig
 # Configuration Main
 {
-
-Param ( [string] $nodeName, $WebDeployPackagePath )
-
 Import-DscResource -ModuleName PSDesiredStateConfiguration
 
 Node $nodeName
