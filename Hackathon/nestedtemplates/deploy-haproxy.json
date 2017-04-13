@@ -35,7 +35,11 @@
     },
     "virtualNetworkname": {
       "type": "string",
-      "defaultValue": "hacknet"
+      "defaultValue": "HackNet"
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "defaultValue": "Demo-Hackathon1"
     },
     "subnetName": {
       "type": "string",
@@ -51,8 +55,6 @@
     "vhdStorageContainerName": "vhds",
     "vmName": "MyUbuntuVM",
     "vmSize": "Standard_DS1_v2",
-    "vnetId": "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-    "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
     "vhdStorageAccountName": "[concat('vhdstorage', uniqueString(resourceGroup().id))]",
     "diagnosticsStorageAccountName": "[variables('vhdStorageAccountName')]",
     "ladMetricsResourceId": "[resourceId('Microsoft.Compute/virtualMachines', variables('vmName'))]"
@@ -95,20 +97,20 @@
         "displayName": "NetworkInterface"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('dnsNameForPublicIP'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]"
+        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('dnsNameForPublicIP'))]"
       ],
       "properties": {
         "ipConfigurations": [
           {
             "name": "ipconfig1",
             "properties": {
+              "privateIPAddress": "10.0.1.9",
               "privateIPAllocationMethod": "Static",
               "publicIPAddress": {
                 "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('dnsNameForPublicIP'))]"
               },
               "subnet": {
-                "id": "[variables('subnetRef')]"
+                "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('virtualNetworkResourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkname'), '/subnets/', parameters('subnetName'))]"
               }
             }
           }
@@ -159,7 +161,7 @@
             }
           ]
         }
-      }, 
+      },
       "resources": [
         {
           "type": "extensions",
