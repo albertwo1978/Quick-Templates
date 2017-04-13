@@ -159,53 +159,7 @@
             }
           ]
         }
-<<<<<<< HEAD
       }, 
-=======
-      },
-<<<<<<< HEAD
-      "dependsOn": [
-        "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
-      ],
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "ipconfig1",
-            "properties": {
-              "privateIPAllocationMethod": "Dynamic",
-              "subnet": {
-                "id": "[variables('subnetRef')]"
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "apiVersion": "[variables('apiVersion')]",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('haproxyVMNamePrefix'), copyindex(), '/configureHAproxyVM')]",
-      "copy": {
-        "name": "haproxyVMExtensionsLoop",
-        "count": "[variables('numberOfHAproxyInstances')]"
-      },
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('haproxyVMNamePrefix'), copyindex())]",
-        "appVMExtensionsLoop"
-      ],
-      "properties": {
-        "publisher": "Microsoft.Azure.Extensions",
-        "type": "CustomScript",
-        "typeHandlerVersion": "2.0",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": "[variables('haproxyVMScripts').fileUris]",
-          "commandToExecute": "[variables('haproxyVMScripts').commandToExecute]"
-        }
-      }
-=======
->>>>>>> origin/master
       "resources": [
         {
           "type": "extensions",
@@ -479,7 +433,6 @@
           }
         }
       ]
->>>>>>> origin/master
     }
   ]
 }
