@@ -295,9 +295,9 @@
         "displayName": "VirtualMachine"
       },
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', variables('webSrvNicName'), copyindex())]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('LBnicName'))]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('LBnicName'))]",
+        "[concat('Microsoft.Compute/virtualMachines/', variables('webSrvName'), '0')]"
       ],
       "properties": {
         "hardwareProfile": {
