@@ -86,18 +86,67 @@
     }
   },
   "variables": {
-    "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-app-cluster.json',parameters('_artifactsLocationSasToken'))]"
+    "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-app-cluster.json',parameters('_artifactsLocationSasToken'))]",
+    "deployDBTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-oracle.json',parameters('_artifactsLocationSasToken'))]"
   },
   "resources": [
     {
       "name": "deploy-app-tier",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2015-01-01",
-      "dependsOn": [ ],
+      "dependsOn": [],
       "properties": {
         "mode": "Incremental",
         "templateLink": {
           "uri": "[variables('deployAppTierTemplateURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "envPrefixName": {
+            "value": "[parameters('envPrefixName')]"
+          },
+          "LBOSVersion": {
+            "value": "[parameters('LBOSVersion')]"
+          },
+          "webSrvVMSize": {
+            "value": "[parameters('webSrvVMSize')]"
+          },
+          "numberOfWebSrvs": {
+            "value": "[parameters('numberOfWebSrvs')]"
+          },
+          "virtualNetworkname": {
+            "value": "[parameters('virtualNetworkname')]"
+          },
+          "virtualNetworkResourceGroup": {
+            "value": "[parameters('virtualNetworkResourceGroup')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "deploy-oracle-tier",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('deployDBTierTemplateURL')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
