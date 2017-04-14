@@ -24,13 +24,6 @@
       "minLength": 2,
       "maxLength": 5
     },
-    "HAProxyPublicIPdnsName": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Globally unique DNS Name for the Public IP used to access the Virtual Machine."
-      }
-    },
     "LBOSVersion": {
       "type": "string",
       "defaultValue": "14.04.2-LTS",
@@ -116,9 +109,6 @@
           },
           "envPrefixName": {
             "value": "[parameters('envPrefixName')]"
-          },
-          "HAProxyPublicIPdnsName": {
-            "value": "[parameters('HAProxyPublicIPdnsName')]"
           },
           "LBOSVersion": {
             "value": "[parameters('LBOSVersion')]"

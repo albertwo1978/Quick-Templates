@@ -24,13 +24,6 @@
       "minLength": 2,
       "maxLength": 5
     },
-    "HAProxyPublicIPdnsName": {
-      "type": "string",
-      "minLength": 1,
-      "metadata": {
-        "description": "Globally unique DNS Name for the Public IP used to access the Virtual Machine."
-      }
-    },
     "LBOSVersion": {
       "type": "string",
       "defaultValue": "14.04.2-LTS",
@@ -100,6 +93,7 @@
     "LBnicName": "eth0",
     "LBName": "dnalb01",
     "LBSize": "Standard_DS1_v2",
+    "HAProxyPublicIPdnsName": "[concat(parameters('envPrefixName'), 'pip', uniqueString(resourceGroup().id))]",
     "diagnosticsStorageAccountName": "[variables('StorageName')]",
     "ladMetricsResourceId": "[resourceId('Microsoft.Compute/virtualMachines', variables('LBName'))]",
     "webSrvName": "[concat(parameters('envPrefixName'), 'app0')]",
@@ -251,7 +245,7 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Network/publicIPAddresses",
-      "name": "[parameters('HAProxyPublicIPdnsName')]",
+      "name": "[variables('HAProxyPublicIPdnsName')]",
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "PublicIPAddress"
@@ -259,7 +253,7 @@
       "properties": {
         "publicIPAllocationMethod": "Static",
         "dnsSettings": {
-          "domainNameLabel": "[parameters('HAProxyPublicIPdnsName')]"
+          "domainNameLabel": "[variables('HAProxyPublicIPdnsName')]"
         }
       }
     },
@@ -272,7 +266,7 @@
         "displayName": "NetworkInterface"
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Network/publicIPAddresses', parameters('HAProxyPublicIPdnsName'))]"
+        "[resourceId('Microsoft.Network/publicIPAddresses', variables('HAProxyPublicIPdnsName'))]"
       ],
       "properties": {
         "ipConfigurations": [
@@ -282,7 +276,7 @@
               "privateIPAddress": "10.0.1.9",
               "privateIPAllocationMethod": "Static",
               "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('HAProxyPublicIPdnsName'))]"
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('HAProxyPublicIPdnsName'))]"
               },
               "subnet": {
                 "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('virtualNetworkResourceGroup'), '/providers/Microsoft.Network/virtualNetworks/', parameters('virtualNetworkname'), '/subnets/', parameters('subnetName'))]"
