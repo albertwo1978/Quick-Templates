@@ -296,8 +296,7 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('LBnicName'))]",
-        "[resourceId('Microsoft.Network/networkInterfaces', variables('webSrvNicName'), copyindex())]"
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('LBnicName'))]"
       ],
       "properties": {
         "hardwareProfile": {
