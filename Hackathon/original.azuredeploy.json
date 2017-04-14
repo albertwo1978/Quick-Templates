@@ -32,7 +32,7 @@
         "14.04.2-LTS"
       ],
       "metadata": {
-        "description": "The Ubuntu version  for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS."
+        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS."
       }
     },
     "webSrvVMSize": {
@@ -80,13 +80,9 @@
     "_artifactsLocationSasToken": {
       "type": "securestring",
       "metadata": {
-        "description": "The sasToken  required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
       },
       "defaultValue": ""
-    },
-    "oracleDisksName": {
-      "type": "string",
-      "defaultValue": "hackorcl"
     }
   },
   "variables": {
@@ -154,54 +150,33 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "virtualNetworkResourceGroup": {
-            "value": "[parameters('virtualNetworkResourceGroup')]"
-          },
-          "virtualNetworkName": {
-            "value": "[parameters('virtualNetworkname')]"
-        },
-        "subnetName": {
-            "value": "[parameters('subnetName')]"
-        },
-        "adminUsername": {
+          "adminUsername": {
             "value": "[parameters('adminUsername')]"
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
-          "disks_hackfestbobjac_name": {
-            "value": "[parameters('oracleDisksName')]"
-        },
-        "disks_hackfestbobjacdisk1_name": {
-            "value": "[concat(parameters('oracleDisksName'), '1')]"
-        },
-        "disks_hackfestbobjacdisk2_name": {
-            "value": "[concat(parameters('oracleDisksName'), '2')]"
-        },
-        "disks_hackfestbobjacdisk3_name": {
-            "value": "[concat(parameters('oracleDisksName'), '3')]"
-        },
-        "disks_hackfestbobjacdisk4_name": {
-            "value": "[concat(parameters('oracleDisksName'), '4')]"
-        },
-        "virtualMachines_hackfestbobjac_name": {
-            "value": "[parameters('oracleDisksName')]"
-        },
-        "networkInterfaces_hackfestbobjac502_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'nic')]"
-        },
-        "networkSecurityGroups_hackfestbobjac_nsg_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'nsg')]"
-        },
-        "publicIPAddresses_hackfestbobjac_ip_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'ip')]"
-        },
-        "storageAccounts_bobjachackfest_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'stor')]"
-        },
-        "extensions_CustomScriptForLinux_name": {
-            "value": "[concat(parameters('oracleDisksName'), '/CustomScriptForLinux')]"
-        },
+          "envPrefixName": {
+            "value": "[parameters('envPrefixName')]"
+          },
+          "LBOSVersion": {
+            "value": "[parameters('LBOSVersion')]"
+          },
+          "webSrvVMSize": {
+            "value": "[parameters('webSrvVMSize')]"
+          },
+          "numberOfWebSrvs": {
+            "value": "[parameters('numberOfWebSrvs')]"
+          },
+          "virtualNetworkname": {
+            "value": "[parameters('virtualNetworkname')]"
+          },
+          "virtualNetworkResourceGroup": {
+            "value": "[parameters('virtualNetworkResourceGroup')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
           },

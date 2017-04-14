@@ -19,8 +19,7 @@
             "type": "String"
         },
         "adminPassword": {
-            "defaultValue": "P@ssw0rd!",
-            "type": "String"
+            "type": "securestring"
         },
         "disks_hackfestbobjac_name": {
             "defaultValue": "hackfestbobjac",
@@ -66,19 +65,31 @@
             "defaultValue": "hackfestbobjac/CustomScriptForLinux",
             "type": "String"
         },
-        "customScriptUris": {
-            "defaultValue": "https://iaasv2tempstorewestus.blob.core.windows.net/vmextensionstemporary-1003bffd801bf39f-20170413212641283/hello-dna.sh?sv=2015-04-05&sr=c&sig=hNb1j8mjvCG%2FhdDyFDgIr3XHHZTJkic5xGMPZ4fbbS0%3D&se=2017-04-14T21%3A26%3A41Z&sp=rw",
-            "type": "String"
+        "_artifactsLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "Location of resources that the script is dependent on such as linked templates and DSC modules"
+            },
+            "defaultValue": ""
         },
-        "commandToExecute": {
-            "defaultValue": "sh hello-dna.sh",
-            "type": "String"
+        "_artifactsLocationSasToken": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+            },
+            "defaultValue": ""
         }
     },
     "variables": {
       "test": "test",
       "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-      "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]"
+      "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
+      "oracleVMScripts": {
+      "fileUris": [
+        "[concat(parameters('_artifactsLocation'), '/scripts/create_oracle_data_volume.sh')]"
+      ],
+      "commandToExecute": "sudo bash -x create_oracle_data_volume.sh"
+    }
   },
     "resources": [
         {
@@ -336,9 +347,9 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "[parameters('customScriptUris')]"
+                        "[variables('oracleVMScripts').fileUris]"
                     ],
-                    "commandToExecute": "[parameters('commandToExecute')]"
+                    "commandToExecute": "[variables('oracleVMScripts').commandToExecute]"
                 }
             },
             "dependsOn": [
