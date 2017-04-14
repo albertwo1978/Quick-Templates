@@ -42,8 +42,7 @@ setup_haproxy() {
     HAPROXY_CFG=/etc/haproxy/haproxy.cfg
     cp -p $HAPROXY_CFG ${HAPROXY_CFG}.default
 
-    echo "
-#-------------------------------------------------------------------------------
+    echo "#-------------------------------------------------------------------------------
 global
     log         127.0.0.1 local2
     chroot      /var/lib/haproxy
@@ -85,7 +84,10 @@ frontend port-80-in
     default_backend         iis-servers-port-80
 backend iis-servers-port-80
     mode                    tcp
-    balance                 roundrobin" > $HAPROXY_CFG
+    balance                 roundrobin
+	server                  app01   10.0.1.4:80 weight 1 check
+    server                  app02   10.0.1.5:80 weight 1 check
+	" > $HAPROXY_CFG
     # Add application VMs to haproxy listener configuration 
     #for APPVM in "${APPVMS[@]}"; do
     #    APPVM_IP=`host $APPVM | awk '/has address/ { print $4 }'`
@@ -96,28 +98,7 @@ backend iis-servers-port-80
     #    fi 
     #done
 echo "
-   server                  app01   10.0.1.4:80 weight 1 check
-   server                  app02   10.0.1.5:80 weight 1 check
-#-------------------------------------------------------------------------------
-listen  stats           127.0.0.1:8080
-        mode            http
-        log             global
 
-        maxconn 10
-
-        timeout client  30s
-        timeout server  30s
-        timeout connect 30s
-        timeout queue   30s
-
-        stats enable
-        stats hide-version
-        stats refresh 5s
-        stats show-node
-        stats auth admin:password
-        stats uri  /haproxy?stats
-
-" >> $HAPROXY_CFG
 	
     chmod --reference ${HAPROXY_CFG}.default
 
