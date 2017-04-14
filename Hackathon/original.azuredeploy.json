@@ -137,54 +137,6 @@
           }
         }
       }
-    },
-    {
-      "name": "deploy-oracle-tier",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [ ],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('deployDBTierTemplateURL')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "adminUsername": {
-            "value": "[parameters('adminUsername')]"
-          },
-          "adminPassword": {
-            "value": "[parameters('adminPassword')]"
-          },
-          "envPrefixName": {
-            "value": "[parameters('envPrefixName')]"
-          },
-          "LBOSVersion": {
-            "value": "[parameters('LBOSVersion')]"
-          },
-          "webSrvVMSize": {
-            "value": "[parameters('webSrvVMSize')]"
-          },
-          "numberOfWebSrvs": {
-            "value": "[parameters('numberOfWebSrvs')]"
-          },
-          "virtualNetworkname": {
-            "value": "[parameters('virtualNetworkname')]"
-          },
-          "virtualNetworkResourceGroup": {
-            "value": "[parameters('virtualNetworkResourceGroup')]"
-          },
-          "subnetName": {
-            "value": "[parameters('subnetName')]"
-          },
-          "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
-          },
-          "_artifactsLocationSasToken": {
-            "value": "[parameters('_artifactsLocationSasToken')]"
-          }
-        }
-      }
     }
   ]
 }
