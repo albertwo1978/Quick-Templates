@@ -92,7 +92,7 @@
   "variables": {
     "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-app-cluster.json',parameters('_artifactsLocationSasToken'))]",
     "deployDBTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-oracle.json',parameters('_artifactsLocationSasToken'))]",
-    "oracleDiskName": "[concat(parameters('envPrefixName'), 'orcl')]"
+    "oracleDisksName": "[concat(parameters('envPrefixName'), 'orcl')]"
   },
   "resources": [
     {
@@ -171,7 +171,7 @@
             "value": "[parameters('adminPassword')]"
           },
           "disks_hackfestbobjac_name": {
-            "value": "[parameters('oracleDisksName')]"
+            "value": "[variables('oracleDisksName')]"
         },
         "disks_hackfestbobjacdisk1_name": {
             "value": "[concat(variables('oracleDisksName'), '1')]"
