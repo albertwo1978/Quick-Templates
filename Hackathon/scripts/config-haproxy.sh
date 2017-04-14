@@ -117,7 +117,7 @@ listen  stats           127.0.0.1:8080
         stats auth admin:password
         stats uri  /haproxy?stats
 
-" > $HAPROXY_CFG
+" >> $HAPROXY_CFG
 	
     chmod --reference ${HAPROXY_CFG}.default
 
