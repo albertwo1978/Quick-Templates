@@ -1,0 +1,141 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminUsername": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "User name for the Virtual Machine."
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Password for the Virtual Machine."
+      }
+    },
+    "envPrefixName": {
+      "type": "string",
+      "metadata": {
+        "description": "Prefix for the environment (2-5 characters)"
+      },
+      "defaultValue": "dna",
+      "minLength": 2,
+      "maxLength": 5
+    },
+    "LBOSVersion": {
+      "type": "string",
+      "defaultValue": "14.04.2-LTS",
+      "allowedValues": [
+        "12.04.5-LTS",
+        "14.04.2-LTS"
+      ],
+      "metadata": {
+        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS."
+      }
+    },
+    "webSrvVMSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2"
+      ],
+      "metadata": {
+        "description": "The size of the Web Server VMs Created"
+      },
+      "defaultValue": "Standard_DS2_v2"
+    },
+    "numberOfWebSrvs": {
+      "type": "int",
+      "metadata": {
+        "description": "Number of Web Servers"
+      },
+      "allowedValues": [
+        1,
+        2
+      ],
+      "defaultValue": 1
+    },
+    "virtualNetworkname": {
+      "type": "string",
+      "defaultValue": "HackNet"
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "defaultValue": "Demo-Hackathon1"
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "app-tier"
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of resources that the script is dependent on such as linked templates and DSC modules"
+      },
+      "defaultValue": "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Hackathon"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
+      },
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-app-cluster.json',parameters('_artifactsLocationSasToken'))]"
+  },
+  "resources": [
+    {
+      "name": "deploy-app-tier",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [ ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('deployAppTierTemplateURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "envPrefixName": {
+            "value": "[parameters('envPrefixName')]"
+          },
+          "LBOSVersion": {
+            "value": "[parameters('LBOSVersion')]"
+          },
+          "webSrvVMSize": {
+            "value": "[parameters('webSrvVMSize')]"
+          },
+          "numberOfWebSrvs": {
+            "value": "[parameters('numberOfWebSrvs')]"
+          },
+          "virtualNetworkname": {
+            "value": "[parameters('virtualNetworkname')]"
+          },
+          "virtualNetworkResourceGroup": {
+            "value": "[parameters('virtualNetworkResourceGroup')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      }
+    }
+  ]
+}
