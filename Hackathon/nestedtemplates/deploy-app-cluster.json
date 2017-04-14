@@ -108,9 +108,9 @@
     "configurationFunction": "WebServerConfig.ps1\\WebServerConfig",
     "haproxyVMScripts": {
       "fileUris": [
-        "[concat(parameters('_artifactsLocation'), '/scripts/haproxyvm-configure.sh')]"
+        "[concat(parameters('_artifactsLocation'), '/scripts/config-haproxy.sh')]"
       ],
-      "commandToExecute": "sudo bash -x haproxyvm-configure.sh"
+      "commandToExecute": "sudo bash -x config-haproxy.sh"
     }
   },
   "resources": [
