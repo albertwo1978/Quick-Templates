@@ -2,47 +2,80 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "vnetName": {
+    "adminUsername": {
       "type": "string",
-      "defaultValue": "HackNet",
+      "minLength": 1,
       "metadata": {
-        "description": "Vnet Name"
+        "description": "User name for the Virtual Machine."
       }
     },
-    "vnetAddressPrefix": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/16",
+    "adminPassword": {
+      "type": "securestring",
       "metadata": {
-        "description": "Vnet Address Prefix"
+        "description": "Password for the Virtual Machine."
       }
     },
-    "subnet1Prefix": {
+    "envPrefixName": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24",
       "metadata": {
-        "description": "Subnet 1 Prefix"
+        "description": "Prefix for the environment (2-5 characters)"
+      },
+      "defaultValue": "dna",
+      "minLength": 2,
+      "maxLength": 5
+    },
+    "HAProxyPublicIPdnsName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Globally unique DNS Name for the Public IP used to access the Virtual Machine."
       }
     },
-    "subnet1Name": {
+    "LBOSVersion": {
       "type": "string",
-      "defaultValue": "data-tier",
+      "defaultValue": "14.04.2-LTS",
+      "allowedValues": [
+        "12.04.5-LTS",
+        "14.04.2-LTS"
+      ],
       "metadata": {
-        "description": "Subnet 1 Name"
+        "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version. Allowed values: 12.04.5-LTS, 14.04.2-LTS."
       }
     },
-    "subnet2Prefix": {
+    "webSrvVMSize": {
       "type": "string",
-      "defaultValue": "10.0.1.0/24",
+      "allowedValues": [
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2"
+      ],
       "metadata": {
-        "description": "Subnet 2 Prefix"
-      }
+        "description": "The size of the Web Server VMs Created"
+      },
+      "defaultValue": "Standard_DS2_v2"
     },
-    "subnet2Name": {
-      "type": "string",
-      "defaultValue": "app-tier",
+    "numberOfWebSrvs": {
+      "type": "int",
       "metadata": {
-        "description": "Subnet 2 Name"
-      }
+        "description": "Number of Web Servers"
+      },
+      "allowedValues": [
+        1,
+        2
+      ],
+      "defaultValue": 1
+    },
+    "virtualNetworkname": {
+      "type": "string",
+      "defaultValue": "HackNet"
+    },
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "defaultValue": "Demo-Hackathon1"
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "app-tier"
     },
     "_artifactsLocation": {
       "type": "string",
@@ -60,44 +93,9 @@
     }
   },
   "variables": {
-    "deployVnetTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-vnet.json',parameters('_artifactsLocationSasToken'))]",
-    "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]",
-    "deployHAScriptURL": "[concat(parameters('_artifactsLocation'),'/scripts/deploy-haproxy.json',parameters('_artifactsLocationSasToken'))]"
+    "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-app-cluster.json',parameters('_artifactsLocationSasToken'))]"
   },
   "resources": [
-    {
-      "name": "deployVnet",
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2015-01-01",
-      "dependsOn": [],
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('deployVnetTemplateURL')]",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "vnetName": {
-            "value": "[parameters('vnetName')]"
-          },
-          "vnetAddressPrefix": {
-            "value": "[parameters('vnetAddressPrefix')]"
-          },
-          "subnet1Prefix": {
-            "value": "[parameters('subnet1Prefix')]"
-          },
-          "subnet1Name": {
-            "value": "[parameters('subnet1Name')]"
-          },
-          "subnet2Prefix": {
-            "value": "[parameters('subnet2Prefix')]"
-          },
-          "subnet2Name": {
-            "value": "[parameters('subnet2Name')]"
-          }
-        }
-      }
-    },
     {
       "name": "deploy-app-tier",
       "type": "Microsoft.Resources/deployments",
@@ -110,23 +108,41 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "vnetName": {
-            "value": "[parameters('vnetName')]"
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
           },
-          "vnetAddressPrefix": {
-            "value": "[parameters('vnetAddressPrefix')]"
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
           },
-          "subnet1Prefix": {
-            "value": "[parameters('subnet1Prefix')]"
+          "envPrefixName": {
+            "value": "[parameters('envPrefixName')]"
           },
-          "subnet1Name": {
-            "value": "[parameters('subnet1Name')]"
+          "HAProxyPublicIPdnsName": {
+            "value": "[parameters('HAProxyPublicIPdnsName')]"
           },
-          "subnet2Prefix": {
-            "value": "[parameters('subnet2Prefix')]"
+          "LBOSVersion": {
+            "value": "[parameters('LBOSVersion')]"
           },
-          "subnet2Name": {
-            "value": "[parameters('subnet2Name')]"
+          "webSrvVMSize": {
+            "value": "[parameters('webSrvVMSize')]"
+          },
+          "numberOfWebSrvs": {
+            "value": "[parameters('numberOfWebSrvs')]"
+          },
+          "virtualNetworkname": {
+            "value": "[parameters('virtualNetworkname')]"
+          },
+          "virtualNetworkResourceGroup": {
+            "value": "[parameters('virtualNetworkResourceGroup')]"
+          },
+          "subnetName": {
+            "value": "[parameters('subnetName')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
           }
         }
       }
