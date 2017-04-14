@@ -91,7 +91,8 @@
   },
   "variables": {
     "deployAppTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-app-cluster.json',parameters('_artifactsLocationSasToken'))]",
-    "deployDBTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-oracle.json',parameters('_artifactsLocationSasToken'))]"
+    "deployDBTierTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/deploy-oracle.json',parameters('_artifactsLocationSasToken'))]",
+    "oracleDiskName": "[concat(parameters('envPrefixName'), 'orcl')]"
   },
   "resources": [
     {
@@ -173,34 +174,34 @@
             "value": "[parameters('oracleDisksName')]"
         },
         "disks_hackfestbobjacdisk1_name": {
-            "value": "[concat(parameters('oracleDisksName'), '1')]"
+            "value": "[concat(variables('oracleDisksName'), '1')]"
         },
         "disks_hackfestbobjacdisk2_name": {
-            "value": "[concat(parameters('oracleDisksName'), '2')]"
+            "value": "[concat(variables('oracleDisksName'), '2')]"
         },
         "disks_hackfestbobjacdisk3_name": {
-            "value": "[concat(parameters('oracleDisksName'), '3')]"
+            "value": "[concat(variables('oracleDisksName'), '3')]"
         },
         "disks_hackfestbobjacdisk4_name": {
-            "value": "[concat(parameters('oracleDisksName'), '4')]"
+            "value": "[concat(variables('oracleDisksName'), '4')]"
         },
         "virtualMachines_hackfestbobjac_name": {
-            "value": "[parameters('oracleDisksName')]"
+            "value": "[variables('oracleDisksName')]"
         },
         "networkInterfaces_hackfestbobjac502_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'nic')]"
+            "value": "[concat(variables('oracleDisksName'), 'nic')]"
         },
         "networkSecurityGroups_hackfestbobjac_nsg_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'nsg')]"
+            "value": "[concat(variables('oracleDisksName'), 'nsg')]"
         },
         "publicIPAddresses_hackfestbobjac_ip_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'ip')]"
+            "value": "[concat(variables('oracleDisksName'), 'ip')]"
         },
         "storageAccounts_bobjachackfest_name": {
-            "value": "[concat(parameters('oracleDisksName'), 'stor')]"
+            "value": "[concat(variables('oracleDisksName'), 'stor')]"
         },
         "extensions_CustomScriptForLinux_name": {
-            "value": "[concat(parameters('oracleDisksName'), '/CustomScriptForLinux')]"
+            "value": "[concat(variables('oracleDisksName'), '/CustomScriptForLinux')]"
         },
           "_artifactsLocation": {
             "value": "[parameters('_artifactsLocation')]"
