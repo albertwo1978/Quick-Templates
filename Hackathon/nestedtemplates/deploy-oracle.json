@@ -65,9 +65,18 @@
         "extensions_CustomScriptForLinux_name": {
             "defaultValue": "hackfestbobjac/CustomScriptForLinux",
             "type": "String"
+        },
+        "customScriptUris": {
+            "defaultValue": "https://iaasv2tempstorewestus.blob.core.windows.net/vmextensionstemporary-1003bffd801bf39f-20170413212641283/hello-dna.sh?sv=2015-04-05&sr=c&sig=hNb1j8mjvCG%2FhdDyFDgIr3XHHZTJkic5xGMPZ4fbbS0%3D&se=2017-04-14T21%3A26%3A41Z&sp=rw",
+            "type": "String"
+        },
+        "commandToExecute": {
+            "defaultValue": "sh hello-dna.sh",
+            "type": "String"
         }
     },
     "variables": {
+      "test": "test",
       "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
       "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]"
   },
@@ -327,9 +336,9 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://iaasv2tempstorewestus.blob.core.windows.net/vmextensionstemporary-1003bffd801bf39f-20170413212641283/hello-dna.sh?sv=2015-04-05&sr=c&sig=hNb1j8mjvCG%2FhdDyFDgIr3XHHZTJkic5xGMPZ4fbbS0%3D&se=2017-04-14T21%3A26%3A41Z&sp=rw"
+                        "[parameters('customScriptUris')]"
                     ],
-                    "commandToExecute": "sh hello-dna.sh"
+                    "commandToExecute": "[parameters('commandToExecute')]"
                 }
             },
             "dependsOn": [
