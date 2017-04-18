@@ -2,11 +2,11 @@
   "deployments": [
     {
       "Name": "DNA 1-Click Azure Deployment",
-      "Uri": "https://github.com/albertwo1978/Project-010/blob/master/IaaS-Stamp/azuredeploy.json"
+      "Uri": "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Hackathon/azuredeploy.json"
     },
     {
       "Name": "Web App, Azure SQL Database and Redis Cache",
-      "Uri": "https://github.com/albertwo1978/Project-010/blob/master/PaaSwRedis-Stamp/azuredeploy.json"
+      "Uri": "https://raw.githubusercontent.com/albertwo1978/Project-010/master/PaaSwRedis-Stamp/azuredeploy.json"
     }
   ]
 }
