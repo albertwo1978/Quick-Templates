@@ -11,6 +11,10 @@
     {
       "Name":"Create a single region DocumentDB database account",
       "Uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-documentdb-account-create/azuredeploy.json"
+    },
+    {
+      "Name":"Logic App Sql Proc",
+      "Uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-logic-app-sql-proc/azuredeploy.json"
     }
   ]
 }
