@@ -7,6 +7,10 @@
     {
       "Name": "Web App, Azure SQL Database and Redis Cache",
       "Uri": "https://raw.githubusercontent.com/albertwo1978/Project-010/master/PaaSwRedis-Stamp/azuredeploy.json"
+    },
+    {
+      "Name":"Create a single region DocumentDB database account",
+      "Uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-documentdb-account-create/azuredeploy.json"
     }
   ]
 }
