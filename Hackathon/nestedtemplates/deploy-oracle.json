@@ -82,7 +82,7 @@
       {
         "lun": 0,
         "managedDisk": {
-                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk0')]"
         },
         "caching": "None",
         "createOption": "Attach"
@@ -90,7 +90,7 @@
       {
         "lun": 1,
         "managedDisk": {
-                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk2')]"
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
         },
         "caching": "None",
         "createOption": "Attach"
@@ -98,7 +98,7 @@
       {
         "lun": 2,
         "managedDisk": {
-                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk3')]"
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk2')]"
         },
         "caching": "None",
         "createOption": "Attach"
@@ -106,7 +106,7 @@
       {
         "lun": 3,
         "managedDisk": {
-                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk4')]"
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk3')]"
         },
         "caching": "None",
         "createOption": "Attach"
