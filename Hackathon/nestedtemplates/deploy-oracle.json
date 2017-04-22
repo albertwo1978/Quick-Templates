@@ -110,14 +110,6 @@
         },
         "caching": "None",
         "createOption": "Attach"
-      },
-      {
-        "lun": 4,
-        "managedDisk": {
-                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk5')]"
-        },
-        "caching": "None",
-        "createOption": "Attach"
       }
     ]
   },
