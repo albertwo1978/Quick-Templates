@@ -170,20 +170,11 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
+          "numManagedDisks": {
+            "value": 4
+          },
           "disks_hackfestbobjac_name": {
             "value": "[variables('oracleDisksName')]"
-        },
-        "disks_hackfestbobjacdisk1_name": {
-            "value": "[concat(variables('oracleDisksName'), '1')]"
-        },
-        "disks_hackfestbobjacdisk2_name": {
-            "value": "[concat(variables('oracleDisksName'), '2')]"
-        },
-        "disks_hackfestbobjacdisk3_name": {
-            "value": "[concat(variables('oracleDisksName'), '3')]"
-        },
-        "disks_hackfestbobjacdisk4_name": {
-            "value": "[concat(variables('oracleDisksName'), '4')]"
         },
         "virtualMachines_hackfestbobjac_name": {
             "value": "[variables('oracleDisksName')]"

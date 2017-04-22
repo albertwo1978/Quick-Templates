@@ -4,66 +4,54 @@
     "parameters": {
         "virtualNetworkResourceGroup": {
             "defaultValue": "hackfestrg",
-            "type": "String"
+            "type": "string"
         },
         "virtualNetworkName": {
             "defaultValue": "hackfestbobjac-vnet",
-            "type": "String"
+            "type": "string"
         },
         "subnetName": {
             "defaultValue": "hackfestsubnet",
-            "type": "String"
+            "type": "string"
         },
         "adminUserName": {
             "defaultValue": "hackfestadmin",
-            "type": "String"
+            "type": "string"
         },
         "adminPassword": {
             "type": "securestring"
         },
+        "numManagedDisks": {
+            "defaultValue": 4,
+            "type": "int"
+        },
         "disks_hackfestbobjac_name": {
             "defaultValue": "hackfestbobjac",
-            "type": "String"
-        },
-        "disks_hackfestbobjacdisk1_name": {
-            "defaultValue": "hackfestbobjacdisk1",
-            "type": "String"
-        },
-        "disks_hackfestbobjacdisk2_name": {
-            "defaultValue": "hackfestbobjacdisk2",
-            "type": "String"
-        },
-        "disks_hackfestbobjacdisk3_name": {
-            "defaultValue": "hackfestbobjacdisk3",
-            "type": "String"
-        },
-        "disks_hackfestbobjacdisk4_name": {
-            "defaultValue": "hackfestbobjacdisk4",
-            "type": "String"
+            "type": "string"
         },
         "virtualMachines_hackfestbobjac_name": {
             "defaultValue": "hackfestbobjac",
-            "type": "String"
+            "type": "string"
         },
         "networkInterfaces_hackfestbobjac502_name": {
             "defaultValue": "hackfestbobjac502",
-            "type": "String"
+            "type": "string"
         },
         "networkSecurityGroups_hackfestbobjac_nsg_name": {
             "defaultValue": "hackfestbobjac-nsg",
-            "type": "String"
+            "type": "string"
         },
         "publicIPAddresses_hackfestbobjac_ip_name": {
             "defaultValue": "hackfestbobjac-ip",
-            "type": "String"
+            "type": "string"
         },
         "storageAccounts_bobjachackfest_name": {
             "defaultValue": "bobjachackfest",
-            "type": "String"
+            "type": "string"
         },
         "extensions_CustomScriptForLinux_name": {
             "defaultValue": "hackfestbobjac/CustomScriptForLinux",
-            "type": "String"
+            "type": "string"
         },
         "_artifactsLocation": {
             "type": "string",
@@ -90,7 +78,48 @@
       ],
       "commandToExecute": "sudo bash -x create_oracle_data_volume.sh"
     },
-    "oracleVmScriptFile":  "[concat(parameters('_artifactsLocation'), '/scripts/create_oracle_data_volume.sh')]"
+    "managedDisksArray": [
+      {
+        "lun": 0,
+        "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
+        },
+        "caching": "None",
+        "createOption": "Attach"
+      },
+      {
+        "lun": 1,
+        "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
+        },
+        "caching": "None",
+        "createOption": "Attach"
+      },
+      {
+        "lun": 2,
+        "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
+        },
+        "caching": "None",
+        "createOption": "Attach"
+      },
+      {
+        "lun": 3,
+        "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
+        },
+        "caching": "None",
+        "createOption": "Attach"
+      },
+      {
+        "lun": 4,
+        "managedDisk": {
+                "id": "[resourceId('Microsoft.Compute/disks', 'dataDisk1')]"
+        },
+        "caching": "None",
+        "createOption": "Attach"
+      }
+    ]
   },
     "resources": [
         {
@@ -113,61 +142,19 @@
             "dependsOn": []
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/2e467bcc-ec84-4430-a27f-beac4ec94251/resourceGroups/hackfestbobjac/providers/Microsoft.Compute/disks/hackfestbobjacdisk1'.",
             "type": "Microsoft.Compute/disks",
-            "name": "[parameters('disks_hackfestbobjacdisk1_name')]",
+            "name": "[concat('datadisk', copyIndex())",
             "apiVersion": "2016-04-30-preview",
-            "location": "eastus2",
-            "properties": {
-                "accountType": "Premium_LRS",
-                "creationData": {
-                    "createOption": "Empty"
-                },
-                "diskSizeGB": 1023
+            "location": "[resourceGroup().location]",
+            "copy": { 
+                "name": "datadiskscopy", 
+                "count": "[parameters('numManagedDisks')]" 
             },
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/2e467bcc-ec84-4430-a27f-beac4ec94251/resourceGroups/hackfestbobjac/providers/Microsoft.Compute/disks/hackfestbobjacdisk2'.",
-            "type": "Microsoft.Compute/disks",
-            "name": "[parameters('disks_hackfestbobjacdisk2_name')]",
-            "apiVersion": "2016-04-30-preview",
-            "location": "eastus2",
             "properties": {
-                "accountType": "Premium_LRS",
                 "creationData": {
                     "createOption": "Empty"
                 },
-                "diskSizeGB": 1023
-            },
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/2e467bcc-ec84-4430-a27f-beac4ec94251/resourceGroups/hackfestbobjac/providers/Microsoft.Compute/disks/hackfestbobjacdisk3'.",
-            "type": "Microsoft.Compute/disks",
-            "name": "[parameters('disks_hackfestbobjacdisk3_name')]",
-            "apiVersion": "2016-04-30-preview",
-            "location": "eastus2",
-            "properties": {
                 "accountType": "Premium_LRS",
-                "creationData": {
-                    "createOption": "Empty"
-                },
-                "diskSizeGB": 1023
-            },
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/2e467bcc-ec84-4430-a27f-beac4ec94251/resourceGroups/hackfestbobjac/providers/Microsoft.Compute/disks/hackfestbobjacdisk4'.",
-            "type": "Microsoft.Compute/disks",
-            "name": "[parameters('disks_hackfestbobjacdisk4_name')]",
-            "apiVersion": "2016-04-30-preview",
-            "location": "eastus2",
-            "properties": {
-                "accountType": "Premium_LRS",
-                "creationData": {
-                    "createOption": "Empty"
-                },
                 "diskSizeGB": 1023
             },
             "dependsOn": []
@@ -192,28 +179,7 @@
                     "osDisk": {
                         "createOption": "FromImage"
                     },
-                    "dataDisks": [
-                        {
-                            "lun": 0,
-                            "createOption": "Empty",
-                            "diskSizeGB": 1023
-                        },
-                        {
-                            "lun": 1,
-                            "createOption": "Empty",
-                            "diskSizeGB": 1023
-                        },
-                        {
-                            "lun": 2,
-                            "createOption": "Empty",
-                            "diskSizeGB": 1023
-                        },
-                        {
-                            "lun": 3,
-                            "createOption": "Empty",
-                            "diskSizeGB": 1023
-                        }
-                    ]
+                    "dataDisks": "[take(variables('managedDisksArray'),parameters('numManagedDisks'))]"
                 },
                 "osProfile": {
                     "computerName": "[parameters('virtualMachines_hackfestbobjac_name')]",
@@ -240,10 +206,7 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/disks', parameters('disks_hackfestbobjac_name'))]",
-                "[resourceId('Microsoft.Compute/disks', parameters('disks_hackfestbobjacdisk1_name'))]",
-                "[resourceId('Microsoft.Compute/disks', parameters('disks_hackfestbobjacdisk2_name'))]",
-                "[resourceId('Microsoft.Compute/disks', parameters('disks_hackfestbobjacdisk3_name'))]",
-                "[resourceId('Microsoft.Compute/disks', parameters('disks_hackfestbobjacdisk4_name'))]",
+                "datadiskscopy",
                 "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_hackfestbobjac502_name'))]",
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_bobjachackfest_name'))]"
             ]
@@ -347,9 +310,7 @@
                 "typeHandlerVersion": "1.4",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "fileUris": [
-                        "[variables('oracleVmScriptFile')]"
-                    ],
+                    "fileUris": "[variables('oracleVMScripts').fileUris]",
                     "commandToExecute": "[variables('oracleVMScripts').commandToExecute]"
                 }
             },
