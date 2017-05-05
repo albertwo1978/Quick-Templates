@@ -15,6 +15,10 @@
     {
       "Name":"Logic App Sql Proc",
       "Uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/101-logic-app-sql-proc/azuredeploy.json"
+    },
+    {
+      "Name":"Create DocumentDB Account Consistency Policy",
+      "Uri":"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/a77dd696c4f95a0d57549e24388273f1ddadc9c7/101-documentdb-account-consistencypolicy-create/azuredeploy.json"
     }
   ]
 }
