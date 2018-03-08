@@ -148,10 +148,6 @@
     }
   ],
   "outputs": {
-    "vnet": {
-      "type": "object",
-      "value": "[reference(resourceId('Microsoft.Network/virtualNetworks',variables('vNet').name))]"
-    },
     "cluster": {
       "type": "object",
       "value": "[reference(resourceId('Microsoft.HDInsight/clusters',parameters('clusterName')))]"
