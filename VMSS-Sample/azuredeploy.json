@@ -30,13 +30,23 @@
     },
     "vnetName": {
       "type": "string",
+      "defaultValue": "Albertwo-TestNet",
       "metadata": {
         "description": "VNET name."
       },
       "maxLength": 20
     },
+    "vnetRGName": {
+        "type": "string",
+        "defaultValue": "Albertwo-TestResources",
+        "metadata": {
+          "description": "VNET Resource Group name."
+        }
+      },
+  
     "subnetName": {
       "type": "string",
+      "defaultValue": "vmss",
       "metadata": {
         "description": "Subnet name."
       },
@@ -80,7 +90,7 @@
                 "name": "LoadBalancerFrontEnd",
                 "properties": {
                 "subnet": {
-                    "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('vnetRGName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
                 }
                 }
             }
@@ -147,7 +157,7 @@
                       "name": "[variables('ipConfigName')]",
                       "properties": {
                         "subnet": {
-                          "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+                          "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('vnetRGName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
                         }
                       }
                     }
