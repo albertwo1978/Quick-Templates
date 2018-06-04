@@ -82,6 +82,9 @@
         "type": "Microsoft.Network/loadBalancers",
         "name": "[variables('loadBalancerName')]",
         "location": "[resourceGroup().location]",
+        "sku": {
+            "name": "Standard"
+        },
         "apiVersion": "2017-04-01",
         "dependsOn": [],
         "properties": {
@@ -89,9 +92,9 @@
             {
                 "name": "LoadBalancerFrontEnd",
                 "properties": {
-                "subnet": {
-                    "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('vnetRGName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
-                }
+                    "subnet": {
+                        "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('vnetRGName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+                    }
                 }
             }
             ],
