@@ -113,7 +113,19 @@
                 "frontendPortRangeEnd": "[variables('natEndPort')]",
                 "backendPort": "[variables('natBackendPort')]"
                 }
-            }
+            },
+            {
+                "name": "workernatpool",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "[variables('frontEndIPConfigID')]"
+                  },
+                  "protocol": "tcp",
+                  "frontendPortRangeStart": "9000",
+                  "frontendPortRangeEnd": "9120",
+                  "backendPort": "9000"
+                }
+              }
             ]
         }
         },
@@ -131,6 +143,7 @@
         "capacity": "[parameters('instanceCount')]"
       },
       "properties": {
+        "overprovision": "false",
         "upgradePolicy": {
           "mode": "Manual"
         },
@@ -158,17 +171,49 @@
                       "name": "[variables('ipConfigName')]",
                       "properties": {
                         "subnet": {
-                          "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('vnetRGName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
-                        }
+                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('vnetRGName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+                        },
+                        "loadBalancerBackendAddressPools": [
+                          {
+                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('loadBalancerName'), '/backendAddressPools/', variables('bePoolName'))]"
+                          }
+                        ],
+                        "loadBalancerInboundNatPools": [
+                          {
+                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('loadBalancerName'), '/inboundNatPools/', variables('natPoolName'))]"
+                          },
+                          {
+                            "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('loadBalancerName'), '/inboundNatPools/workernatpool')]"
+                          }
+                        ]
                       }
                     }
                   ]
                 }
               }
             ]
+          },
+          "extensionProfile": {
+            "extensions": [
+              {
+                "name": "lapextension",
+                "properties": {
+                  "publisher": "Microsoft.OSTCExtensions",
+                  "type": "CustomScriptForLinux",
+                  "typeHandlerVersion": "1.4",
+                  "autoUpgradeMinorVersion": true,
+                  "settings": {
+                    "fileUris": [
+                      "https://raw.githubusercontent.com/gbowerman/azure-myriad/master/vmss-ubuntu-scale/installserver.sh",
+                      "https://raw.githubusercontent.com/gbowerman/azure-myriad/master/vmss-ubuntu-scale/workserver.py"
+                    ],
+                    "commandToExecute": "bash installserver.sh"
+                  }
+                }
+              }
+            ]
           }
-        },
-        "overprovision": "false"
+        }
       }
     }
   ]
