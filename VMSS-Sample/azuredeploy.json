@@ -44,6 +44,7 @@
     }
   },
   "variables": {
+    "namingInfix": "[toLower(substring(concat(parameters('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
     "vmSize": "Standard_A1",
     "nicName": "[concat(parameters('vmssName'), 'nic')]",
     "ipConfigName": "[concat(parameters('vmssName'), 'ipconfig')]",
@@ -56,9 +57,55 @@
     },
     "imageReference": "[variables('osType')]",
     "computeApiVersion": "2017-03-30",
-    "networkApiVersion": "2017-04-01"
+    "networkApiVersion": "2017-04-01",
+    "loadBalancerName": "[concat(variables('namingInfix'), 'lb')]",
+    "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('loadBalancerName'))]",
+    "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+    "natPoolName": "[concat(variables('namingInfix'), 'natpool')]",
+    "bePoolName": "[concat(variables('namingInfix'), 'bepool')]",
+    "natStartPort": 50000,
+    "natEndPort": 50119,
+    "natBackendPort": 22
   },
     "resources": [
+    {
+        "type": "Microsoft.Network/loadBalancers",
+        "name": "[variables('loadBalancerName')]",
+        "location": "[resourceGroup().location]",
+        "apiVersion": "2017-04-01",
+        "dependsOn": [],
+        "properties": {
+            "frontendIPConfigurations": [
+            {
+                "name": "LoadBalancerFrontEnd",
+                "properties": {
+                "subnet": {
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+                }
+                }
+            }
+            ],
+            "backendAddressPools": [
+            {
+                "name": "[variables('bePoolName')]"
+            }
+            ],
+            "inboundNatPools": [
+            {
+                "name": "[variables('natPoolName')]",
+                "properties": {
+                "frontendIPConfiguration": {
+                    "id": "[variables('frontEndIPConfigID')]"
+                },
+                "protocol": "tcp",
+                "frontendPortRangeStart": "[variables('natStartPort')]",
+                "frontendPortRangeEnd": "[variables('natEndPort')]",
+                "backendPort": "[variables('natBackendPort')]"
+                }
+            }
+            ]
+        }
+        },
     { 
       "type": "Microsoft.Compute/virtualMachineScaleSets",
       "name": "[parameters('vmssName')]",
