@@ -111,6 +111,9 @@
       "name": "[parameters('vmssName')]",
       "location": "[variables('location')]",
       "apiVersion": "[variables('computeApiVersion')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/loadBalancers/', variables('loadBalancerName'))]"
+      ],
       "sku": {
         "name": "[variables('vmSize')]",
         "tier": "Standard",
