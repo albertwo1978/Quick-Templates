@@ -33,7 +33,7 @@
       "metadata": {
         "description": "VNET name."
       },
-      "maxLength": 10
+      "maxLength": 20
     },
     "subnetName": {
       "type": "string",
