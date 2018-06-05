@@ -103,13 +103,13 @@
       },
       {
         "type": "Microsoft.Network/loadBalancers",
+        "apiVersion": "[variables('networkApiVersion')]",
         "name": "[variables('loadBalancerName')]",
         "location": "[variables('location')]",
         "condition": true,
         "sku": {
             "name": "Standard"
         },
-        "apiVersion": "[variables('networkApiVersion')]",
         "dependsOn": [
           "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
         ],
@@ -127,32 +127,6 @@
           "backendAddressPools": [
             {
               "name": "[variables('bePoolName')]"
-            }
-          ],
-          "inboundNatPools": [
-            {
-              "name": "[variables('natPoolName')]",
-              "properties": {
-                "frontendIPConfiguration": {
-                  "id": "[variables('frontEndIPConfigID')]"
-                },
-                "protocol": "tcp",
-                "frontendPortRangeStart": "[variables('natStartPort')]",
-                "frontendPortRangeEnd": "[variables('natEndPort')]",
-                "backendPort": "[variables('natBackendPort')]"
-              }
-            },
-            {
-              "name": "natpool2",
-              "properties": {
-                "frontendIPConfiguration": {
-                  "id": "[variables('frontEndIPConfigID')]"
-                },
-                "protocol": "tcp",
-                "frontendPortRangeStart": "9000",
-                "frontendPortRangeEnd": "9120",
-                "backendPort": "9000"
-              }
             }
           ]
         }
