@@ -4,7 +4,7 @@
     "parameters": {
       "vmSku": {
         "type": "string",
-        "defaultValue": "Standard_D1_v2",
+        "defaultValue": "Standard_A1",
         "metadata": {
           "description": "Size of VMs in the VM Scale Set."
         }
@@ -102,6 +102,9 @@
         "type": "Microsoft.Network/loadBalancers",
         "name": "[variables('loadBalancerName')]",
         "location": "[variables('location')]",
+        "sku": {
+            "name": "Standard"
+        },
         "apiVersion": "[variables('networkApiVersion')]",
         "dependsOn": [
           "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
