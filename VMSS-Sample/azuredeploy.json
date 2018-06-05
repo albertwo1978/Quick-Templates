@@ -77,7 +77,6 @@
       "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
       "albID": "[resourceId('Microsoft.Network/loadBalancers',variables('albName'))]",
       "natPoolName": "[concat(parameters('vmssName'), 'natpool')]",
-      "bePoolName": "[concat(parameters('vmssName'), 'bepool')]",
       "natStartPort": 50000,
       "natEndPort": 50120,
       "natBackendPort": 22,
@@ -85,10 +84,11 @@
       "snatProbePort": 22,
       "nicName": "[concat(parameters('vmssName'), 'nic')]",
       "ipConfigName": "[concat(parameters('vmssName'), 'ipconfig')]",
+      "albBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
       "albFEIPConfigID": "[concat(variables('albID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
-      "albBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('albName'), '/backendAddressPools/', variables('bePoolName'))]",
-      "albBEPoolID": "[concat(variables('albID'),'/backendAddressPools/',variables('albID'))]",
-      "albNatProbe": "albNatProbe",
+      "albBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('albName'), '/backendAddressPools/', variables('albBEPoolName'))]",
+      "albBEPoolID": "[concat(variables('albID'),'/backendAddressPools/',variables('albBEPoolName'))]",
+      "albNatProbe": "[concat(parameters('vmssName'), 'natprobe')]",
       "albNatProbeID": "[concat(variables('albID'),'/probes/',variables('albNatProbe'))]",
       "osType": {
         "publisher": "Canonical",
@@ -143,7 +143,7 @@
           ],
           "backendAddressPools": [
             {
-              "name": "[variables('bePoolName')]"
+              "name": "[variables('albBEPoolName')]"
             }
           ],
           "loadBalancingRules": [
