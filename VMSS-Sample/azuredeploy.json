@@ -198,10 +198,10 @@
               {
                 "name": "lapextension",
                 "properties": {
-                  "publisher": "Microsoft.OSTCExtensions",
+                  "publisher": "Microsoft.Azure.Extensions",
                   "type": "CustomScriptForLinux",
-                  "typeHandlerVersion": "1.4",
-                  "autoUpgradeMinorVersion": true,
+                  "typeHandlerVersion": "2.0",
+                  "autoUpgradeMinorVersion": false,
                   "settings": {
                     "fileUris": [
                       "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/installserver.sh",
