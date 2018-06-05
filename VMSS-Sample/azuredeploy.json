@@ -216,10 +216,10 @@
             ],
             "loadBalancingRules": [
                 {
-                    "name": "outbound-snat-rule",
+                    "name": "outbound-web-rule",
                     "properties": {
                         "frontendIPConfiguration": {
-                            "id": "[variables('albFEIPConfigID')]"
+                            "id": "[variables('ilbFEIPConfigID')]"
                         },
                         "backendAddressPool": {
                             "id": "[variables('ilbBEPoolID')]"
@@ -227,7 +227,7 @@
                         "probe": {
                             "id": "[variables('ilbWebProbeID')]"
                         },
-                        "protocol": "Http",
+                        "protocol": "Tcp",
                         "frontendPort": "[variables('webHttpPort')]",
                         "backendPort": "[variables('webHttpPort')]",
                         "enableFloatingIP": false
@@ -241,7 +241,7 @@
                 "frontendIPConfiguration": {
                     "id": "[variables('ilbFEIPConfigID')]"
                 },
-                "protocol": "tcp",
+                "protocol": "Tcp",
                 "frontendPortRangeStart": "[variables('natStartPort')]",
                 "frontendPortRangeEnd": "[variables('natEndPort')]",
                 "backendPort": "[variables('natBackendPort')]"
@@ -253,7 +253,7 @@
                   "frontendIPConfiguration": {
                     "id": "[variables('ilbFEIPConfigID')]"
                   },
-                  "protocol": "tcp",
+                  "protocol": "Tcp",
                   "frontendPortRangeStart": "9000",
                   "frontendPortRangeEnd": "9120",
                   "backendPort": "9000"
@@ -264,10 +264,11 @@
                 {
                     "name": "[variables('ilbWebProbe')]",
                     "properties": {
-                        "protocol": "Tcp",
+                        "protocol": "Http",
                         "port": "[variables('webProbePort')]",
                         "intervalInSeconds": 5,
-                        "numberOfProbes": 2
+                        "numberOfProbes": 2,
+                        "requestPath": "/"
                     }
                 }
             ]
