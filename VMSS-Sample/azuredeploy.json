@@ -199,7 +199,7 @@
                 "name": "lapextension",
                 "properties": {
                   "publisher": "Microsoft.Azure.Extensions",
-                  "type": "CustomScriptForLinux",
+                  "type": "CustomScript",
                   "typeHandlerVersion": "2.0",
                   "autoUpgradeMinorVersion": false,
                   "settings": {
