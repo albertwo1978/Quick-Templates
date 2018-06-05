@@ -91,7 +91,7 @@
         "name": "[variables('publicIPAddressName')]",
         "location": "[variables('location')]",
         "sku": {
-            "name": "Standard"
+            "name": "Basic"
         },
         "apiVersion": "[variables('networkApiVersion')]",
         "properties": {
@@ -105,9 +105,6 @@
         "type": "Microsoft.Network/loadBalancers",
         "name": "[variables('loadBalancerName')]",
         "location": "[variables('location')]",
-        "sku": {
-            "name": "Standard"
-        },
         "apiVersion": "[variables('networkApiVersion')]",
         "dependsOn": [
           "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
