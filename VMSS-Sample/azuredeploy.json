@@ -37,6 +37,7 @@
       },
       "enableOutboundInternet": {
         "type": "string",
+        "defaultValue": "Yes",
         "allowedValues": [
             "Yes",
             "No"
@@ -60,7 +61,6 @@
             "description": "VNET Resource Group name."
           }
         },
-    
       "subnetName": {
         "type": "string",
         "defaultValue": "vmss",
@@ -73,29 +73,39 @@
     "variables": {
       "location": "[resourceGroup().location]",
       "publicIPAddressName": "[concat(parameters('vmssName'), 'pip')]",
-      "albName": "[concat(parameters('vmssName'), 'alb')]",
       "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
+      "albName": "[concat(parameters('vmssName'), 'alb')]",
       "albID": "[resourceId('Microsoft.Network/loadBalancers',variables('albName'))]",
-      "natPoolName": "[concat(parameters('vmssName'), 'natpool')]",
-      "natStartPort": 50000,
-      "natEndPort": 50120,
-      "natBackendPort": 22,
-      "snatTcpPort": 59998,
-      "snatProbePort": 22,
-      "nicName": "[concat(parameters('vmssName'), 'nic')]",
-      "ipConfigName": "[concat(parameters('vmssName'), 'ipconfig')]",
-      "albBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
+      "albBEPoolName": "[concat(parameters('vmssName'), 'ilbbepool')]",
       "albFEIPConfigID": "[concat(variables('albID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
       "albBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('albName'), '/backendAddressPools/', variables('albBEPoolName'))]",
       "albBEPoolID": "[concat(variables('albID'),'/backendAddressPools/',variables('albBEPoolName'))]",
       "albNatProbe": "[concat(parameters('vmssName'), 'natprobe')]",
       "albNatProbeID": "[concat(variables('albID'),'/probes/',variables('albNatProbe'))]",
+      "snatTcpPort": 59998,
+      "snatProbePort": 22,
+      "ilbName": "[concat(parameters('vmssName'), 'ilb')]",
+      "ilbID": "[resourceId('Microsoft.Network/loadBalancers',variables('ilbName'))]",
+      "ilbBEPoolName": "[concat(parameters('vmssName'), 'ilbbepool')]",
+      "ilbFEIPConfigID": "[concat(variables('ilbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+      "ilbBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/backendAddressPools/', variables('ilbBEPoolName'))]",
+      "ilbBEPoolID": "[concat(variables('ilbID'),'/backendAddressPools/',variables('ilbBEPoolName'))]",
+      "ilbWebProbe": "[concat(parameters('vmssName'), 'natprobe')]",
+      "ilbWebProbeID": "[concat(variables('ilbID'),'/probes/',variables('ilbWebProbe'))]",
+      "ilbNatPoolName": "[concat(parameters('vmssName'), 'natpool')]",
+      "natStartPort": 50000,
+      "natEndPort": 50120,
+      "natBackendPort": 22,
+      "webHttpPort": 80,
+      "webProbePort": 80,
       "osType": {
         "publisher": "Canonical",
         "offer": "UbuntuServer",
         "sku": "16.04-LTS",
         "version": "latest"
       },
+      "nicName": "[concat(parameters('vmssName'), 'nic')]",
+      "ipConfigName": "[concat(parameters('vmssName'), 'ipconfig')]",
       "imageReference": "[variables('osType')]",
       "computeApiVersion": "2017-03-30",
       "networkApiVersion": "2017-08-01",
@@ -180,12 +190,97 @@
         }
       },
       {
+        "type": "Microsoft.Network/loadBalancers",
+        "name": "[variables('ilbName')]",
+        "location": "[resourceGroup().location]",
+        "sku": {
+            "name": "Standard"
+        },
+        "apiVersion": "2017-08-01",
+        "dependsOn": [],
+        "properties": {
+            "frontendIPConfigurations": [
+            {
+                "name": "LoadBalancerFrontEnd",
+                "properties": {
+                    "subnet": {
+                        "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', parameters('vnetRGName'), '/providers/Microsoft.Network/virtualNetworks/', parameters('vnetName'), '/subnets/', parameters('subnetName'))]"
+                    }
+                }
+            }
+            ],
+            "backendAddressPools": [
+            {
+                "name": "[variables('ilbBEPoolID')]"
+            }
+            ],
+            "loadBalancingRules": [
+                {
+                    "name": "outbound-snat-rule",
+                    "properties": {
+                        "frontendIPConfiguration": {
+                            "id": "[variables('albFEIPConfigID')]"
+                        },
+                        "backendAddressPool": {
+                            "id": "[variables('ilbBEPoolID')]"
+                        },
+                        "probe": {
+                            "id": "[variables('ilbWebProbeID')]"
+                        },
+                        "protocol": "Http",
+                        "frontendPort": "[variables('webHttpPort')]",
+                        "backendPort": "[variables('webHttpPort')]",
+                        "enableFloatingIP": false
+                    }
+                }
+            ],
+            "inboundNatPools": [
+            {
+                "name": "[variables('ilbNatPoolName')]",
+                "properties": {
+                "frontendIPConfiguration": {
+                    "id": "[variables('ilbFEIPConfigID')]"
+                },
+                "protocol": "tcp",
+                "frontendPortRangeStart": "[variables('natStartPort')]",
+                "frontendPortRangeEnd": "[variables('natEndPort')]",
+                "backendPort": "[variables('natBackendPort')]"
+                }
+            },
+            {
+                "name": "workernatpool",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "[variables('ilbFEIPConfigID')]"
+                  },
+                  "protocol": "tcp",
+                  "frontendPortRangeStart": "9000",
+                  "frontendPortRangeEnd": "9120",
+                  "backendPort": "9000"
+                }
+              }
+            ],
+            "probes": [
+                {
+                    "name": "[variables('ilbWebProbe')]",
+                    "properties": {
+                        "protocol": "Tcp",
+                        "port": "[variables('webProbePort')]",
+                        "intervalInSeconds": 5,
+                        "numberOfProbes": 2
+                    }
+                }
+            ]
+        }
+      },
+      {
         "type": "Microsoft.Compute/virtualMachineScaleSets",
         "name": "[parameters('vmssName')]",
         "location": "[variables('location')]",
         "apiVersion": "[variables('computeApiVersion')]",
         "dependsOn": [
-          "[concat('Microsoft.Network/loadBalancers/', variables('albName'))]"
+          "[concat('Microsoft.Network/loadBalancers/', variables('albName'))]",
+          "[concat('Microsoft.Network/loadBalancers/', variables('ilbName'))]"
         ],
         "sku": {
           "name": "[parameters('vmSku')]",
@@ -226,6 +321,17 @@
                           "loadBalancerBackendAddressPools": [
                             {
                               "id": "[variables('albBEAddressPool')]"
+                            },
+                            {
+                              "id": "[variables('ilbBEAddressPool')]"
+                            }  
+                          ],
+                          "loadBalancerInboundNatPools": [
+                            {
+                              "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/inboundNatPools/', variables('ilbNatPoolName'))]"
+                            },
+                            {
+                              "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/inboundNatPools/workernatpool')]"
                             }
                           ]
                         }
