@@ -81,9 +81,14 @@
       "natStartPort": 50000,
       "natEndPort": 50120,
       "natBackendPort": 22,
+      "snatTcpPort": 59998,
+      "snatProbePort": 22,
       "nicName": "[concat(parameters('vmssName'), 'nic')]",
       "ipConfigName": "[concat(parameters('vmssName'), 'ipconfig')]",
-      "frontEndIPConfigID": "[concat(variables('albID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+      "albFrontEndIPConfigID": "[concat(variables('albID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+      "albBackEndPoolID": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'), '/backendAddressPools/', variables('bePoolName'))]",
+      "albNatProbe": "albNatProbe",
+      "albProbeID1": "[concat(variables('albID'),'/probes/',variables('albNatProbe'))]",
       "osType": {
         "publisher": "Canonical",
         "offer": "UbuntuServer",
@@ -138,7 +143,38 @@
             {
               "name": "[variables('bePoolName')]"
             }
-          ]
+          ],
+          "loadBalancingRules": [
+            {
+                "name": "outbound-snat-rule",
+                "properties": {
+                    "frontendIPConfiguration": {
+                        "id": "[variables('albFrontEndIPConfigID')]"
+                    },
+                    "backendAddressPool": {
+                        "id": "[variables('albBackEndPoolID')]"
+                    },
+                    "probe": {
+                        "id": "[variables('albProbeID1')]"
+                    },
+                    "protocol": "Tcp",
+                    "frontendPort": "[variables('snatTcpPort')]",
+                    "backendPort": "[variables('snatTcpPort')]",
+                    "enableFloatingIP": false
+                }
+            }
+        ],
+        "probes": [
+            {
+                "name": "[variables('albNatProbe')]",
+                "properties": {
+                    "protocol": "Tcp",
+                    "port": "[variables('snatProbePort')]",
+                    "intervalInSeconds": 5,
+                    "numberOfProbes": 2
+                }
+            }
+        ]
         }
       },
       {
@@ -187,7 +223,7 @@
                           },
                           "loadBalancerBackendAddressPools": [
                             {
-                              "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('externalLoadBalancerName'), '/backendAddressPools/', variables('bePoolName'))]"
+                              "id": "variables('albBackEndPoolID')"
                             }
                           ]
                         }
