@@ -90,7 +90,7 @@
       "ilbFEIPConfigID": "[concat(variables('ilbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
       "ilbBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/backendAddressPools/', variables('ilbBEPoolName'))]",
       "ilbBEPoolID": "[concat(variables('ilbID'),'/backendAddressPools/',variables('ilbBEPoolName'))]",
-      "ilbWebProbe": "[concat(parameters('vmssName'), 'natprobe')]",
+      "ilbWebProbe": "[concat(parameters('vmssName'), 'webprobe')]",
       "ilbWebProbeID": "[concat(variables('ilbID'),'/probes/',variables('ilbWebProbe'))]",
       "ilbNatPoolName": "[concat(parameters('vmssName'), 'natpool')]",
       "natStartPort": 50000,
