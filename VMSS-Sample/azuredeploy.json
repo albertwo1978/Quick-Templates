@@ -95,7 +95,7 @@
         },
         "apiVersion": "[variables('networkApiVersion')]",
         "properties": {
-          "publicIPAllocationMethod": "Dynamic",
+          "publicIPAllocationMethod": "Static",
           "dnsSettings": {
             "domainNameLabel": "[parameters('vmssName')]"
           }
