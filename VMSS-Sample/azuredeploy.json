@@ -211,7 +211,7 @@
             ],
             "backendAddressPools": [
             {
-                "name": "[variables('ilbBEPoolID')]"
+                "name": "[variables('ilbBEPoolName')]"
             }
             ],
             "loadBalancingRules": [
