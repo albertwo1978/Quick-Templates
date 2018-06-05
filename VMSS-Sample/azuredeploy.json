@@ -35,6 +35,16 @@
           "description": "Admin password on all VMs."
         }
       },
+      "enableOutboundInternet": {
+        "type": "string",
+        "allowedValues": [
+            "Yes",
+            "No"
+        ],
+        "metadata": {
+            "description": "Enable outbound Internet access via source NAT to support ongoing VM Agent extension communication needs"
+        }
+    },
       "vnetName": {
         "type": "string",
         "defaultValue": "Albertwo-TestNet",
@@ -106,7 +116,7 @@
         "apiVersion": "[variables('networkApiVersion')]",
         "name": "[variables('externalLoadBalancerName')]",
         "location": "[variables('location')]",
-        "condition": true,
+        "condition": "[equals(parameters('enableOutboundInternet'),'Yes')]",
         "sku": {
             "name": "Standard"
         },
