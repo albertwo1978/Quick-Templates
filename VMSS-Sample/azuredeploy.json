@@ -105,6 +105,7 @@
         "type": "Microsoft.Network/loadBalancers",
         "name": "[variables('loadBalancerName')]",
         "location": "[variables('location')]",
+        "condition": true,
         "sku": {
             "name": "Standard"
         },
@@ -230,10 +231,11 @@
                     "typeHandlerVersion": "2.0",
                     "autoUpgradeMinorVersion": true,
                     "settings": {
-                      "fileUris": [
-                        "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/install_apache_vmss.sh"
-                      ],
-                      "commandToExecute": "bash install_apache_vmss.sh"
+                        "fileUris": [
+                            "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/installserver.sh",
+                            "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/workserver.py"
+                          ],
+                          "commandToExecute": "bash installserver.sh"
                     }
                   }
                 }
