@@ -231,10 +231,9 @@
                     "autoUpgradeMinorVersion": true,
                     "settings": {
                       "fileUris": [
-                        "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/installserver.sh",
-                        "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/workserver.py"
+                        "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/install_apache_vmss.sh"
                       ],
-                      "commandToExecute": "bash installserver.sh"
+                      "commandToExecute": "bash install_apache_vmss.sh"
                     }
                   }
                 }
