@@ -166,24 +166,10 @@
                     "backendAddressPool": {
                         "id": "[variables('albBEPoolID')]"
                     },
-                    "probe": {
-                        "id": "[variables('albNatProbeID')]"
-                    },
                     "protocol": "Tcp",
                     "frontendPort": "[variables('snatTcpPort')]",
                     "backendPort": "[variables('snatTcpPort')]",
                     "enableFloatingIP": false
-                }
-            }
-        ],
-        "probes": [
-            {
-                "name": "[variables('albNatProbe')]",
-                "properties": {
-                    "protocol": "Tcp",
-                    "port": "[variables('snatProbePort')]",
-                    "intervalInSeconds": 5,
-                    "numberOfProbes": 2
                 }
             }
         ]
