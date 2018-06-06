@@ -110,7 +110,10 @@
             ],
             "backendAddressPools": [
             {
-                "name": "[variables('ilbBEPoolName')]"
+                "name": "[variables('ilbBEPoolName')]",
+            },
+            {
+                "name": "[variables('ilbBESnatPoolName')]"
             }
             ],
             "loadBalancingRules": [
