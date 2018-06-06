@@ -159,7 +159,7 @@
         "properties": {
           "overprovision": "false",
           "upgradePolicy": {
-            "mode": "Rolling"
+            "mode": "Manual"
           },
           "virtualMachineProfile": {
             "storageProfile": {
