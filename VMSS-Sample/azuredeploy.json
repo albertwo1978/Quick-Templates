@@ -418,23 +418,6 @@
             }
           ]
         }
-      },
-      {
-        "type": "Microsoft.Compute/virtualMachineScaleSets/providers/diagnosticSettings",
-        "name": "[concat(parameters('vmssName'), '/', 'Microsoft.Insights/service')]",
-        "apiVersion": "2015-07-01",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('vmSSName'))]"
-        ],
-        "properties": {
-            "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
-            "logs": [
-                {
-                    "category": "DefaultParameter",
-                    "enabled": true
-                }
-            ]
-        }
-    }
+      }
     ]
   }
