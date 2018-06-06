@@ -46,7 +46,6 @@
             "description": "Enable outbound Internet access via source NAT to support ongoing VM Agent extension communication needs"
         }
       },
-
       "vnetName": {
         "type": "string",
         "defaultValue": "Albertwo-TestNet",
@@ -111,6 +110,69 @@
     },
     "resources": [
       {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "name": "[variables('publicIPAddressName')]",
+        "location": "[variables('location')]",
+        "condition": "[equals(parameters('enableOutboundInternet'),'Yes')]",
+        "sku": {
+            "name": "Standard"
+        },
+        "apiVersion": "[variables('networkApiVersion')]",
+        "properties": {
+          "publicIPAllocationMethod": "Static",
+          "dnsSettings": {
+            "domainNameLabel": "[parameters('vmssName')]"
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Network/loadBalancers",
+        "apiVersion": "[variables('networkApiVersion')]",
+        "name": "[variables('albName')]",
+        "location": "[variables('location')]",
+        "condition": "[equals(parameters('enableOutboundInternet'),'Yes')]",
+        "sku": {
+            "name": "Standard"
+        },
+        "dependsOn": [
+          "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
+        ],
+        "properties": {
+          "frontendIPConfigurations": [
+            {
+              "name": "LoadBalancerFrontEnd",
+              "properties": {
+                "publicIPAddress": {
+                  "id": "[variables('publicIPAddressID')]"
+                }
+              }
+            }
+          ],
+          "backendAddressPools": [
+            {
+              "name": "[variables('albBEPoolName')]"
+            }
+          ],
+          "loadBalancingRules": [
+            {
+                "name": "outbound-snat-rule",
+                "properties": {
+                    "frontendIPConfiguration": {
+                        "id": "[variables('albFEIPConfigID')]"
+                    },
+                    "backendAddressPool": {
+                        "id": "[variables('albBEPoolID')]"
+                    },
+                    "protocol": "Tcp",
+                    "frontendPort": "[variables('snatTcpPort')]",
+                    "backendPort": "[variables('snatTcpPort')]",
+                    "enableFloatingIP": false
+                }
+            }
+        ]
+        }
+      },
+      {
         "type": "Microsoft.Network/loadBalancers",
         "name": "[variables('ilbName')]",
         "location": "[resourceGroup().location]",
@@ -154,6 +216,32 @@
                         "enableFloatingIP": false
                     }
                 }
+            ],
+            "inboundNatPools": [
+            {
+                "name": "[variables('ilbNatPoolName')]",
+                "properties": {
+                "frontendIPConfiguration": {
+                    "id": "[variables('ilbFEIPConfigID')]"
+                },
+                "protocol": "Tcp",
+                "frontendPortRangeStart": "[variables('natStartPort')]",
+                "frontendPortRangeEnd": "[variables('natEndPort')]",
+                "backendPort": "[variables('natBackendPort')]"
+                }
+            },
+            {
+                "name": "workernatpool",
+                "properties": {
+                  "frontendIPConfiguration": {
+                    "id": "[variables('ilbFEIPConfigID')]"
+                  },
+                  "protocol": "Tcp",
+                  "frontendPortRangeStart": "9000",
+                  "frontendPortRangeEnd": "9120",
+                  "backendPort": "9000"
+                }
+              }
             ],
             "probes": [
                 {
@@ -216,12 +304,43 @@
                           },
                           "loadBalancerBackendAddressPools": [
                             {
+                              "id": "[variables('albBEAddressPool')]"
+                            },
+                            {
                               "id": "[variables('ilbBEAddressPool')]"
                             }  
+                          ],
+                          "loadBalancerInboundNatPools": [
+                            {
+                              "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/inboundNatPools/', variables('ilbNatPoolName'))]"
+                            },
+                            {
+                              "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/inboundNatPools/workernatpool')]"
+                            }
                           ]
                         }
                       }
                     ]
+                  }
+                }
+              ]
+            },
+            "extensionProfile": {
+              "extensions": [
+                {
+                  "name": "lapextension",
+                  "properties": {
+                    "publisher": "Microsoft.Azure.Extensions",
+                    "type": "CustomScript",
+                    "typeHandlerVersion": "2.0",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                        "fileUris": [
+                            "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/installserver.sh",
+                            "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/workserver.py"
+                          ],
+                          "commandToExecute": "bash installserver.sh"
+                    }
                   }
                 }
               ]
@@ -245,9 +364,9 @@
             {
               "name": "Profile1",
               "capacity": {
-                "minimum": "3",
-                "maximum": "3",
-                "default": "3"
+                "minimum": "1",
+                "maximum": "10",
+                "default": "1"
               },
               "rules": [
                 {
