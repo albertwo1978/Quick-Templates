@@ -420,7 +420,7 @@
         }
       },
       {
-        "type": "Microsoft.Automation/automationAccounts/providers/diagnosticSettings",
+        "type": "Microsoft.Compute/virtualMachineScaleSets/providers/diagnosticSettings",
         "name": "[concat(parameters('vmssName'), '/', 'Microsoft.Insights/service')]",
         "apiVersion": "2015-07-01",
         "dependsOn": [],
