@@ -63,14 +63,18 @@
       "location": "[resourceGroup().location]",
       "ilbName": "[concat(parameters('vmssName'), 'ilb')]",
       "ilbID": "[resourceId('Microsoft.Network/loadBalancers',variables('ilbName'))]",
-      "ilbBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
       "ilbFEIPConfigID": "[concat(variables('ilbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+      "ilbBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
       "ilbBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/backendAddressPools/', variables('ilbBEPoolName'))]",
       "ilbBEPoolID": "[concat(variables('ilbID'),'/backendAddressPools/',variables('ilbBEPoolName'))]",
       "ilbWebProbe": "[concat(parameters('vmssName'), 'webprobe')]",
       "ilbWebProbeID": "[concat(variables('ilbID'),'/probes/',variables('ilbWebProbe'))]",
       "webHttpPort": 80,
       "webProbePort": 80,
+      "ilbBESnatPoolName": "[concat(parameters('vmssName'), 'besnatpool')]",      
+      "ilbBESnatAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/backendAddressPools/', variables('ilbBESnatPoolName'))]",
+      "ilbBESnatPoolID": "[concat(variables('ilbID'),'/backendAddressPools/',variables('ilbBESnatPoolName'))]",
+      "snatTcpPort": 59998,
       "osType": {
         "publisher": "Canonical",
         "offer": "UbuntuServer",
@@ -125,6 +129,21 @@
                         "protocol": "Tcp",
                         "frontendPort": "[variables('webHttpPort')]",
                         "backendPort": "[variables('webHttpPort')]",
+                        "enableFloatingIP": false
+                    }
+                },
+                {
+                    "name": "outbound-snat-rule",
+                    "properties": {
+                        "frontendIPConfiguration": {
+                            "id": "[variables('ilbFEIPConfigID')]"
+                        },
+                        "backendAddressPool": {
+                            "id": "[variables('ilbBESnatPoolID')]"
+                        },
+                        "protocol": "Tcp",
+                        "frontendPort": "[variables('snatTcpPort')]",
+                        "backendPort": "[variables('snatTcpPort')]",
                         "enableFloatingIP": false
                     }
                 }
@@ -190,7 +209,10 @@
                           "loadBalancerBackendAddressPools": [
                             {
                               "id": "[variables('ilbBEAddressPool')]"
-                            }  
+                            },
+                            {
+                              "id": "[variables('ilbBESnatAddressPool')]"
+                            }    
                           ]
                         }
                       }
