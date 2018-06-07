@@ -46,6 +46,13 @@
             "description": "Enable outbound Internet access via source NAT to support ongoing VM Agent extension communication needs"
         }
       },
+      "omsWorkspaceName": {
+        "type": "string",
+        "defaultValue": "albertwooms",
+        "metadata": {
+          "description": "OMS Workspace Name."
+        }
+      },
       "vnetName": {
         "type": "string",
         "defaultValue": "Albertwo-TestNet",
@@ -340,6 +347,21 @@
                             "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/workserver.py"
                           ],
                           "commandToExecute": "bash installserver.sh"
+                    }
+                  }
+                },
+                {
+                  "name": "[concat('OMSVmExt', '_', parameters('vmssName'))]",
+                  "properties": {
+                    "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                    "type": "MicrosoftMonitoringAgent",
+                    "typeHandlerVersion": "1.0",
+                    "autoUpgradeMinorVersion": true,
+                    "settings": {
+                      "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename')), '2015-11-01-preview').customerId]"
+                    },
+                    "protectedSettings": {
+                      "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename')),'2015-11-01-preview').primarySharedKey]"
                     }
                   }
                 }
