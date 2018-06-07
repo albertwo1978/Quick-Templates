@@ -46,13 +46,6 @@
             "description": "Enable outbound Internet access via source NAT to support ongoing VM Agent extension communication needs"
         }
       },
-      "omsWorkspaceName": {
-        "type": "string",
-        "defaultValue": "albertwooms",
-        "metadata": {
-          "description": "OMS Workspace Name."
-        }
-      },
       "vnetName": {
         "type": "string",
         "defaultValue": "Albertwo-TestNet",
@@ -417,23 +410,6 @@
               ]
             }
           ]
-        }
-      },
-      {
-        "type": "Microsoft.Compute/virtualMachineScaleSets/providers/diagnosticSettings",
-        "name": "[concat(parameters('vmssName'), '/', 'Microsoft.Insights/service')]",
-        "apiVersion": "2015-07-01",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachineScaleSets/', parameters('vmSSName'))]"
-        ],
-        "properties": {
-            "workspaceId": "[resourceId('Microsoft.OperationalInsights/workspaces', parameters('omsWorkspaceName'))]",
-            "logs": [
-                {
-                    "category": "Event",
-                    "enabled": true
-                }
-            ]
         }
       }
     ]
