@@ -35,24 +35,6 @@
           "description": "Admin password on all VMs."
         }
       },
-      "enableOutboundInternet": {
-        "type": "string",
-        "defaultValue": "Yes",
-        "allowedValues": [
-            "Yes",
-            "No"
-        ],
-        "metadata": {
-            "description": "Enable outbound Internet access via source NAT to support ongoing VM Agent extension communication needs"
-        }
-      },
-      "omsWorkspaceName": {
-        "type": "string",
-        "defaultValue": "albertwooms",
-        "metadata": {
-          "description": "OMS Workspace Name."
-        }
-      },
       "vnetName": {
         "type": "string",
         "defaultValue": "Albertwo-TestNet",
@@ -79,27 +61,14 @@
     },
     "variables": {
       "location": "[resourceGroup().location]",
-      "publicIPAddressName": "[concat(parameters('vmssName'), 'pip')]",
-      "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
-      "albName": "[concat(parameters('vmssName'), 'alb')]",
-      "albID": "[resourceId('Microsoft.Network/loadBalancers',variables('albName'))]",
-      "albBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
-      "albFEIPConfigID": "[concat(variables('albID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
-      "albBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('albName'), '/backendAddressPools/', variables('albBEPoolName'))]",
-      "albBEPoolID": "[concat(variables('albID'),'/backendAddressPools/',variables('albBEPoolName'))]",
-      "snatTcpPort": 59998,
       "ilbName": "[concat(parameters('vmssName'), 'ilb')]",
       "ilbID": "[resourceId('Microsoft.Network/loadBalancers',variables('ilbName'))]",
-      "ilbBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
       "ilbFEIPConfigID": "[concat(variables('ilbID'),'/frontendIPConfigurations/loadBalancerFrontEnd')]",
+      "ilbBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
       "ilbBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/backendAddressPools/', variables('ilbBEPoolName'))]",
       "ilbBEPoolID": "[concat(variables('ilbID'),'/backendAddressPools/',variables('ilbBEPoolName'))]",
       "ilbWebProbe": "[concat(parameters('vmssName'), 'webprobe')]",
       "ilbWebProbeID": "[concat(variables('ilbID'),'/probes/',variables('ilbWebProbe'))]",
-      "ilbNatPoolName": "[concat(parameters('vmssName'), 'natpool')]",
-      "natStartPort": 50000,
-      "natEndPort": 50120,
-      "natBackendPort": 22,
       "webHttpPort": 80,
       "webProbePort": 80,
       "osType": {
@@ -112,73 +81,9 @@
       "ipConfigName": "[concat(parameters('vmssName'), 'ipconfig')]",
       "imageReference": "[variables('osType')]",
       "computeApiVersion": "2017-03-30",
-      "networkApiVersion": "2017-08-01",
       "insightsApiVersion": "2015-04-01"
     },
     "resources": [
-      {
-        "type": "Microsoft.Network/publicIPAddresses",
-        "name": "[variables('publicIPAddressName')]",
-        "location": "[variables('location')]",
-        "condition": "[equals(parameters('enableOutboundInternet'),'Yes')]",
-        "sku": {
-            "name": "Standard"
-        },
-        "apiVersion": "[variables('networkApiVersion')]",
-        "properties": {
-          "publicIPAllocationMethod": "Static",
-          "dnsSettings": {
-            "domainNameLabel": "[parameters('vmssName')]"
-          }
-        }
-      },
-      {
-        "type": "Microsoft.Network/loadBalancers",
-        "apiVersion": "[variables('networkApiVersion')]",
-        "name": "[variables('albName')]",
-        "location": "[variables('location')]",
-        "condition": "[equals(parameters('enableOutboundInternet'),'Yes')]",
-        "sku": {
-            "name": "Standard"
-        },
-        "dependsOn": [
-          "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
-        ],
-        "properties": {
-          "frontendIPConfigurations": [
-            {
-              "name": "LoadBalancerFrontEnd",
-              "properties": {
-                "publicIPAddress": {
-                  "id": "[variables('publicIPAddressID')]"
-                }
-              }
-            }
-          ],
-          "backendAddressPools": [
-            {
-              "name": "[variables('albBEPoolName')]"
-            }
-          ],
-          "loadBalancingRules": [
-            {
-                "name": "outbound-snat-rule",
-                "properties": {
-                    "frontendIPConfiguration": {
-                        "id": "[variables('albFEIPConfigID')]"
-                    },
-                    "backendAddressPool": {
-                        "id": "[variables('albBEPoolID')]"
-                    },
-                    "protocol": "Tcp",
-                    "frontendPort": "[variables('snatTcpPort')]",
-                    "backendPort": "[variables('snatTcpPort')]",
-                    "enableFloatingIP": false
-                }
-            }
-        ]
-        }
-      },
       {
         "type": "Microsoft.Network/loadBalancers",
         "name": "[variables('ilbName')]",
@@ -224,32 +129,6 @@
                     }
                 }
             ],
-            "inboundNatPools": [
-            {
-                "name": "[variables('ilbNatPoolName')]",
-                "properties": {
-                "frontendIPConfiguration": {
-                    "id": "[variables('ilbFEIPConfigID')]"
-                },
-                "protocol": "Tcp",
-                "frontendPortRangeStart": "[variables('natStartPort')]",
-                "frontendPortRangeEnd": "[variables('natEndPort')]",
-                "backendPort": "[variables('natBackendPort')]"
-                }
-            },
-            {
-                "name": "workernatpool",
-                "properties": {
-                  "frontendIPConfiguration": {
-                    "id": "[variables('ilbFEIPConfigID')]"
-                  },
-                  "protocol": "Tcp",
-                  "frontendPortRangeStart": "9000",
-                  "frontendPortRangeEnd": "9120",
-                  "backendPort": "9000"
-                }
-              }
-            ],
             "probes": [
                 {
                     "name": "[variables('ilbWebProbe')]",
@@ -270,8 +149,7 @@
         "location": "[variables('location')]",
         "apiVersion": "[variables('computeApiVersion')]",
         "dependsOn": [
-          "[concat('Microsoft.Network/loadBalancers/', variables('albName'))]",
-          "[concat('Microsoft.Network/loadBalancers/', variables('ilbName'))]"
+            "[concat('Microsoft.Network/loadBalancers/', variables('ilbName'))]"
         ],
         "sku": {
           "name": "[parameters('vmSku')]",
@@ -311,58 +189,12 @@
                           },
                           "loadBalancerBackendAddressPools": [
                             {
-                              "id": "[variables('albBEAddressPool')]"
-                            },
-                            {
                               "id": "[variables('ilbBEAddressPool')]"
-                            }  
-                          ],
-                          "loadBalancerInboundNatPools": [
-                            {
-                              "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/inboundNatPools/', variables('ilbNatPoolName'))]"
-                            },
-                            {
-                              "id": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/inboundNatPools/workernatpool')]"
                             }
                           ]
                         }
                       }
                     ]
-                  }
-                }
-              ]
-            },
-            "extensionProfile": {
-              "extensions": [
-                {
-                  "name": "lapextension",
-                  "properties": {
-                    "publisher": "Microsoft.Azure.Extensions",
-                    "type": "CustomScript",
-                    "typeHandlerVersion": "2.0",
-                    "autoUpgradeMinorVersion": true,
-                    "settings": {
-                        "fileUris": [
-                            "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/installserver.sh",
-                            "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/VMSS-Sample/workserver.py"
-                          ],
-                          "commandToExecute": "bash installserver.sh"
-                    }
-                  }
-                },
-                {
-                  "name": "[concat('OMSVmExt', '_', parameters('vmssName'))]",
-                  "properties": {
-                    "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                    "type": "MicrosoftMonitoringAgent",
-                    "typeHandlerVersion": "1.0",
-                    "autoUpgradeMinorVersion": true,
-                    "settings": {
-                      "workspaceId": "8317570a-4021-4dd2-b94e-6ad0ef4e09eb"
-                    },
-                    "protectedSettings": {
-                      "workspaceKey": "rVdT1UMRqZU77qp7iBj6V4ri6/GaLJ7TMS6a73NugBAmBNmgVRUEOGx45+RIDQlco5k08QGJjBeIW3maN5i3kw=="
-                    }
                   }
                 }
               ]
@@ -387,7 +219,7 @@
               "name": "Profile1",
               "capacity": {
                 "minimum": "3",
-                "maximum": "10",
+                "maximum": "3",
                 "default": "3"
               },
               "rules": [
