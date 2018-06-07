@@ -358,10 +358,10 @@
                     "typeHandlerVersion": "1.0",
                     "autoUpgradeMinorVersion": true,
                     "settings": {
-                      "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename')), '2015-11-01-preview').customerId]"
+                      "workspaceId": "8317570a-4021-4dd2-b94e-6ad0ef4e09eb"
                     },
                     "protectedSettings": {
-                      "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspacename')),'2015-11-01-preview').primarySharedKey]"
+                      "workspaceKey": "rVdT1UMRqZU77qp7iBj6V4ri6/GaLJ7TMS6a73NugBAmBNmgVRUEOGx45+RIDQlco5k08QGJjBeIW3maN5i3kw=="
                     }
                   }
                 }
