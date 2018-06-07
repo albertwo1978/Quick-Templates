@@ -46,13 +46,6 @@
             "description": "Enable outbound Internet access via source NAT to support ongoing VM Agent extension communication needs"
         }
       },
-      "omsWorkspaceName": {
-        "type": "string",
-        "defaultValue": "albertwooms",
-        "metadata": {
-          "description": "OMS Workspace Name."
-        }
-      },
       "vnetName": {
         "type": "string",
         "defaultValue": "Albertwo-TestNet",

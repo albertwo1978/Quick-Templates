@@ -67,10 +67,9 @@
       "ilbBEPoolName": "[concat(parameters('vmssName'), 'bepool')]",
       "ilbBEAddressPool": "[concat('/subscriptions/', subscription().subscriptionId,'/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Network/loadBalancers/', variables('ilbName'), '/backendAddressPools/', variables('ilbBEPoolName'))]",
       "ilbBEPoolID": "[concat(variables('ilbID'),'/backendAddressPools/',variables('ilbBEPoolName'))]",
-      "ilbWebProbe": "[concat(parameters('vmssName'), 'webprobe')]",
-      "ilbWebProbeID": "[concat(variables('ilbID'),'/probes/',variables('ilbWebProbe'))]",
-      "webHttpPort": 80,
-      "webProbePort": 80,
+      "ilbSshProbe": "[concat(parameters('vmssName'), 'sshprobe')]",
+      "ilbSshProbeID": "[concat(variables('ilbID'),'/probes/',variables('ilbSshProbe'))]",
+      "sshPort": 22,
       "osType": {
         "publisher": "Canonical",
         "offer": "UbuntuServer",
@@ -120,21 +119,21 @@
                             "id": "[variables('ilbBEPoolID')]"
                         },
                         "probe": {
-                            "id": "[variables('ilbWebProbeID')]"
+                            "id": "[variables('ilbSshProbeID')]"
                         },
                         "protocol": "Tcp",
-                        "frontendPort": "[variables('webHttpPort')]",
-                        "backendPort": "[variables('webHttpPort')]",
+                        "frontendPort": "[variables('sshPort')]",
+                        "backendPort": "[variables('sshPort')]",
                         "enableFloatingIP": false
                     }
                 }
             ],
             "probes": [
                 {
-                    "name": "[variables('ilbWebProbe')]",
+                    "name": "[variables('ilbSshProbe')]",
                     "properties": {
                         "protocol": "Http",
-                        "port": "[variables('webProbePort')]",
+                        "port": "[variables('sshPort')]",
                         "intervalInSeconds": 5,
                         "numberOfProbes": 2,
                         "requestPath": "/"
