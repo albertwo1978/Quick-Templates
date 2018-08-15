@@ -27,7 +27,7 @@
     "resources": [
       {
         "type": "Microsoft.Storage/storageAccounts",
-        "name": "[concat(variables('saUniqueString')[copyIndex()], variables('newStorageAccountSuffix'))]",
+        "name": "[concat(variables('saUniqueString')[copyIndex()])]",
         "location": "[resourceGroup().location]",
         "apiVersion": "2015-06-15",
         "copy": {
