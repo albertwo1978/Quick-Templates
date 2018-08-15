@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "nsgCount": {
+        "type": "int",
+        "defaultValue": 800,
+        "minValue": 1,
+        "maxValue": 800,
+        "metadata": {
+          "description": "Number of Network Security Groups created"
+        }
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "apiVersion": "2015-05-01-preview",
+        "type": "Microsoft.Network/networkSecurityGroups",
+        "name": "[concat(copyIndex(),'nsg1', uniqueString(resourceGroup().id))]",
+        "location": "[resourceGroup().location]",
+        "copy": {
+          "name": "nsgLoop",
+          "count": "[parameters('nsgCount')]"
+        },
+        "properties": {
+          "securityRules": [
+            {
+              "name": "rdp_rule",
+              "properties": {
+                "description": "Allow RDP",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "3389",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 100,
+                "direction": "Inbound"
+              }
+            },
+            {
+              "name": "web_rule",
+              "properties": {
+                "description": "Allow WEB",
+                "protocol": "Tcp",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "Internet",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 101,
+                "direction": "Inbound"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }

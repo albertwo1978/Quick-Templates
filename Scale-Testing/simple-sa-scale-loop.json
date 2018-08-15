@@ -1,0 +1,33 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "saCount": {
+        "type": "int",
+        "defaultValue": 1,
+        "minValue": 1,
+        "maxValue": 800,
+        "metadata": {
+          "description": "Number of Storage Accounts deployed"
+        }
+      }
+    },
+    "variables": {
+      "storageAccountType": "Standard_LRS"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Storage/storageAccounts",
+        "name": "[concat(copyIndex(),'sa1', uniqueString(resourceGroup().id))]",
+        "location": "[resourceGroup().location]",
+        "apiVersion": "2015-06-15",
+        "copy": {
+          "name": "saLoop",
+          "count": "[parameters('saCount')]"
+        },
+        "properties": {
+          "accountType": "[variables('storageAccountType')]"
+        }
+      }
+    ]
+  }

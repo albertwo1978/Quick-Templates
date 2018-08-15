@@ -1,0 +1,169 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "nsgCount": {
+        "type": "int",
+        "defaultValue": 800,
+        "minValue": 1,
+        "maxValue": 800,
+        "metadata": {
+          "description": "Number of Storage Accounts deployed"
+        }
+      },
+      "_artifactsLocation": {
+        "type": "string",
+        "metadata": {
+          "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+        },
+        "defaultValue": "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Scale-Testing/nestedTemplates/nsg.json"
+      }
+    },
+    "variables": {},
+    "resources": [
+    {
+          "name": "[concat('nsgSet1', copyindex())]",
+          "type": "Microsoft.Resources/deployments",
+          "apiVersion": "2016-09-01",
+          "copy": {
+            "name": "deploymentLoop",
+            "count": "[parameters('nsgCount')]"
+          },
+          "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+              "uri": "[parameters('_artifactsLocation')]",
+              "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+              "nsgName": {
+                  "value": "[concat(copyIndex(),'nsg1', uniqueString(resourceGroup().id))]"
+              },
+              "location": {
+                  "value": "[resourceGroup().location]"
+              }
+            }
+          }
+    },
+    {
+        "name": "[concat('nsgSet2', copyindex())]",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2016-09-01",
+        "copy": {
+          "name": "deploymentLoop",
+          "count": "[parameters('nsgCount')]"
+        },
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[parameters('_artifactsLocation')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "nsgName": {
+                "value": "[concat(copyIndex(),'nsg2', uniqueString(resourceGroup().id))]"
+            },
+            "location": {
+                "value": "[resourceGroup().location]"
+            }
+          }
+        }
+    },
+    {
+      "name": "[concat('nsgSet3', copyindex())]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "copy": {
+        "name": "deploymentLoop",
+        "count": "[parameters('nsgCount')]"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "[concat(copyIndex(),'nsg3', uniqueString(resourceGroup().id))]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
+    },
+    {
+        "name": "[concat('nsgSet4', copyindex())]",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2016-09-01",
+        "copy": {
+          "name": "deploymentLoop",
+          "count": "[parameters('nsgCount')]"
+        },
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[parameters('_artifactsLocation')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "nsgName": {
+                "value": "[concat(copyIndex(),'nsg4', uniqueString(resourceGroup().id))]"
+            },
+            "location": {
+                "value": "[resourceGroup().location]"
+            }
+          }
+        }
+    },
+    {
+      "name": "[concat('nsgSet5', copyindex())]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "copy": {
+        "name": "deploymentLoop",
+        "count": "[parameters('nsgCount')]"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "[concat(copyIndex(),'nsg5', uniqueString(resourceGroup().id))]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
+    },
+    {
+      "name": "[concat('nsgSet6', copyindex())]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "copy": {
+        "name": "deploymentLoop",
+        "count": "[parameters('nsgCount')]"
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "[concat(copyIndex(),'nsg6', uniqueString(resourceGroup().id))]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
+    }
+    ]
+  }
