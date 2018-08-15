@@ -2,41 +2,53 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "saName": {
-        "type": "string",
-        "defaultValue": "scratch",
-        "metadata": {
-          "description": "Base name for storage account"
-        }
-      },
       "saCount": {
         "type": "int",
-        "defaultValue": 100,
+        "defaultValue": 800,
         "minValue": 1,
-        "maxValue": 100,
+        "maxValue": 800,
         "metadata": {
           "description": "Number of Storage Accounts deployed"
         }
+      },
+      "_artifactsLocation": {
+        "type": "string",
+        "metadata": {
+          "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+        },
+        "defaultValue": "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Scale-Testing/nestedTemplates/sa.json"
       }
     },
     "variables": {
-      "storageAccountType": "Standard_LRS",
-      "newStorageAccountSuffix": "[concat(parameters('saName'), 'sa')]",
-      "saUniqueString": "[concat('sa', uniqueString(resourceGroup().id))]"
+      "storageAccountType": "Standard_LRS"
     },
     "resources": [
-      {
-        "type": "Microsoft.Storage/storageAccounts",
-        "name": "[concat(variables('saUniqueString')[copyIndex()])]",
-        "location": "[resourceGroup().location]",
-        "apiVersion": "2015-06-15",
-        "copy": {
-          "name": "storageLoop",
-          "count": "[parameters('saCount')]"
-        },
-        "properties": {
-          "accountType": "[variables('storageAccountType')]"
+        {
+            "name": "[concat('saSet', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2016-09-01",
+            "copy": {
+              "name": "deploymentLoop",
+              "count": "[parameters('saCount')]"
+            },
+            "properties": {
+              "mode": "Incremental",
+              "templateLink": {
+                "uri": "parameters('_artifactsLocation')",
+                "contentVersion": "1.0.0.0"
+              },
+              "parameters": {
+                "accountType": {
+                    "value": "[variables('storageAccountType')]"
+                },
+                "saName": {
+                    "value": "[concat(copyIndex(),'sa', uniqueString(resourceGroup().id))]"
+                },
+                "location": {
+                    "value": "[resourceGroup().location]"
+                }
+              }
+            }
         }
-      }
     ]
   }
