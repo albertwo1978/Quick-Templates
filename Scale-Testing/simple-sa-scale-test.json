@@ -24,7 +24,7 @@
     },
     "resources": [
         {
-            "name": "[concat('saSet', copyindex())]",
+            "name": "[concat('saSet1', copyindex())]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2016-09-01",
             "copy": {
@@ -34,7 +34,7 @@
             "properties": {
               "mode": "Incremental",
               "templateLink": {
-                "uri": "parameters('_artifactsLocation')",
+                "uri": "[parameters('_artifactsLocation')]",
                 "contentVersion": "1.0.0.0"
               },
               "parameters": {
@@ -42,7 +42,7 @@
                     "value": "[variables('storageAccountType')]"
                 },
                 "saName": {
-                    "value": "[concat(copyIndex(),'sa', uniqueString(resourceGroup().id))]"
+                    "value": "[concat(copyIndex(),'sa1', uniqueString(resourceGroup().id))]"
                 },
                 "location": {
                     "value": "[resourceGroup().location]"
