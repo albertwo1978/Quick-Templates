@@ -11,7 +11,7 @@
       },
       "saCount": {
         "type": "int",
-        "defaultValue": "100",
+        "defaultValue": 100,
         "metadata": {
           "description": "Number of test storage accounts to deploy"
         }
