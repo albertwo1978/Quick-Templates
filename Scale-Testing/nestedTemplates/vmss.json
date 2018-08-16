@@ -28,7 +28,7 @@
         "type": "string",
         "defaultValue": "eastus2",
         "metadata": {
-          "description": "Storage Account Location"
+          "description": "Virtual Machine Scaleset Location"
         }
       }
     },
