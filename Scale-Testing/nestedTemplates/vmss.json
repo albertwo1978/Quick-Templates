@@ -8,6 +8,9 @@
           "description": "Number of VMSS Clusters deployed"
         }
       },
+      "loopId": {
+        "type": "string"
+      },
       "singlePlacementGroup": {
         "type": "bool",
         "defaultValue": true
@@ -37,7 +40,7 @@
       {
         "type": "Microsoft.Compute/virtualMachineScaleSets",
         "apiVersion": "2017-03-30",
-        "name": "[concat(copyIndex(),'vmss', uniqueString(resourceGroup().id))]",
+        "name": "[concat(copyIndex(),'vmss',parameters('loopId'),uniqueString(resourceGroup().id))]",
         "location": "[resourceGroup().location]",
         "sku": {
           "name": "Standard_A1",

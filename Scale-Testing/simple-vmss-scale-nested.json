@@ -63,6 +63,9 @@
             "vmssCount": {
                 "value": "[parameters('vmssCount')]"
             },
+            "loopId": {
+                "value": "1"
+            },
             "singlePlacementGroup": {
                 "value": "[parameters('singlePlacementGroup')]"
             },
@@ -97,6 +100,9 @@
           "parameters": {
             "vmssCount": {
                 "value": "[parameters('vmssCount')]"
+            },
+            "loopId": {
+                "value": "2"
             },
             "singlePlacementGroup": {
                 "value": "[parameters('singlePlacementGroup')]"
@@ -133,6 +139,9 @@
             "vmssCount": {
                 "value": "[parameters('vmssCount')]"
             },
+            "loopId": {
+                "value": "3"
+            },
             "singlePlacementGroup": {
                 "value": "[parameters('singlePlacementGroup')]"
             },
@@ -167,6 +176,9 @@
           "parameters": {
             "vmssCount": {
                 "value": "[parameters('vmssCount')]"
+            },
+            "loopId": {
+                "value": "4"
             },
             "singlePlacementGroup": {
                 "value": "[parameters('singlePlacementGroup')]"
@@ -203,6 +215,9 @@
             "vmssCount": {
                 "value": "[parameters('vmssCount')]"
             },
+            "loopId": {
+                "value": "5"
+            },
             "singlePlacementGroup": {
                 "value": "[parameters('singlePlacementGroup')]"
             },
@@ -237,6 +252,9 @@
           "parameters": {
             "vmssCount": {
                 "value": "[parameters('vmssCount')]"
+            },
+            "loopId": {
+                "value": "6"
             },
             "singlePlacementGroup": {
                 "value": "[parameters('singlePlacementGroup')]"
