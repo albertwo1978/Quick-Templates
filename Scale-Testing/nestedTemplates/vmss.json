@@ -2,8 +2,11 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "VMSSName": {
-        "type": "string"
+      "vmssCount": {
+        "type": "int",
+        "metadata": {
+          "description": "Number of VMSS Clusters deployed"
+        }
       },
       "singlePlacementGroup": {
         "type": "bool",
@@ -20,6 +23,13 @@
       },
       "adminPassword": {
         "type": "securestring"
+      },
+      "location": {
+        "type": "string",
+        "defaultValue": "eastus2",
+        "metadata": {
+          "description": "Storage Account Location"
+        }
       }
     },
     "variables": {},
@@ -27,12 +37,16 @@
       {
         "type": "Microsoft.Compute/virtualMachineScaleSets",
         "apiVersion": "2017-03-30",
-        "name": "[parameters('vmSSName')]",
+        "name": "[concat(copyIndex(),'vmss', uniqueString(resourceGroup().id))]",
         "location": "[resourceGroup().location]",
         "sku": {
           "name": "Standard_A1",
           "tier": "Standard",
           "capacity": "[parameters('instanceCount')]"
+        },
+        "copy": {
+          "name": "vmssLoop",
+          "count": "[parameters('vmssCount')]"
         },
         "properties": {
           "singlePlacementGroup": "[parameters('singlePlacementGroup')]",
@@ -54,19 +68,19 @@
               }
             },
             "osProfile": {
-              "computerNamePrefix": "[parameters('vmSSName')]",
+              "computerNamePrefix": "vmss",
               "adminUsername": "[parameters('adminUsername')]",
               "adminPassword": "[parameters('adminPassword')]"
             },
             "networkProfile": {
               "networkInterfaceConfigurations": [
                 {
-                  "name": "[concat('nic', parameters('vmSSName'))]",
+                  "name": "nic1",
                   "properties": {
                     "primary": "true",
                     "ipConfigurations": [
                       {
-                        "name": "[concat('ipconfig', parameters('vmSSName'))]",
+                        "name": "ipconfig1",
                         "properties": {
                           "subnet": {
                             "Id": "[parameters('subnetId')]"

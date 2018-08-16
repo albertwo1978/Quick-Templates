@@ -1,0 +1,88 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "singlePlacementGroup": {
+        "type": "bool",
+        "defaultValue": true
+      },
+      "instanceCount": {
+        "type": "int",
+        "defaultValue": 1,
+        "metadata": {
+          "description": "Number of instances in each Virtual Machine Scale Set"
+        }
+      },
+      "subnetId": {
+        "type": "string",
+        "defaultValue": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/TestVnet/providers/Microsoft.Network/virtualNetworks/Test-Vnet/subnets/default",
+        "metadata": {
+          "description": "Subnet where Scale Sets will deploy"
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "defaultValue": "catAdmin",
+        "metadata": {
+          "description": "Admin username"
+        }
+      },
+      "adminPassword": {
+        "type": "securestring"
+      },
+      "vmssCount": {
+        "type": "int",
+        "defaultValue": 2,
+        "minValue": 1,
+        "maxValue": 800,
+        "metadata": {
+          "description": "Number of single instance Virtual Machine Scale Sets created"
+        }
+      },
+      "_artifactsLocation": {
+        "type": "string",
+        "metadata": {
+          "description": "The base URI where artifacts required by this template are located. When the template is deployed using the accompanying scripts, a private location in the subscription will be used and this value will be automatically generated."
+        },
+        "defaultValue": "https://raw.githubusercontent.com/albertwo1978/Quick-Templates/master/Scale-Testing/nestedTemplates/vmss.json"
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "name": "vmssSet1",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2016-09-01",
+        "properties": {
+          "mode": "Incremental",
+          "templateLink": {
+            "uri": "[parameters('_artifactsLocation')]",
+            "contentVersion": "1.0.0.0"
+          },
+          "parameters": {
+            "vmssCount": {
+                "value": "[parameters('vmssCount')]"
+            },
+            "singlePlacementGroup": {
+                "value": "[parameters('singlePlacementGroup')]"
+            },
+            "instanceCount": {
+              "value": "[parameters('instanceCount')]"
+            },
+            "subnetId": {
+              "value": "[parameters('subnetId')]"
+            },
+            "adminUsername": {
+              "value": "[parameters('adminUsername')]"
+            },
+            "adminPassword": {
+              "value": "[parameters('adminPassword')]"
+            },
+            "location": {
+                "value": "[resourceGroup().location]"
+            }
+          }
+        }
+    }
+    ]
+  }

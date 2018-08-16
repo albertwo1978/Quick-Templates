@@ -4,11 +4,11 @@
     "parameters": {
       "nsgCount": {
         "type": "int",
-        "defaultValue": 800,
+        "defaultValue": 200,
         "minValue": 1,
         "maxValue": 800,
         "metadata": {
-          "description": "Number of Storage Accounts deployed"
+          "description": "Number of Network Security Groups created"
         }
       },
       "_artifactsLocation": {
@@ -22,28 +22,142 @@
     "variables": {},
     "resources": [
     {
-          "name": "[concat('nsgSet1', copyindex())]",
-          "type": "Microsoft.Resources/deployments",
-          "apiVersion": "2016-09-01",
-          "copy": {
-            "name": "deploymentLoop",
-            "count": "[parameters('nsgCount')]"
+      "name": "nsgSet1",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "nsg1"
           },
-          "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-              "uri": "[parameters('_artifactsLocation')]",
-              "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-              "nsgName": {
-                  "value": "[concat(copyIndex(),'nsg1', uniqueString(resourceGroup().id))]"
-              },
-              "location": {
-                  "value": "[resourceGroup().location]"
-              }
-            }
+          "nsgCount": {
+              "value": "[parameters('nsgCount')]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
           }
+        }
+      }
+    },
+    {
+      "name": "nsgSet2",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "nsg2"
+          },
+          "nsgCount": {
+              "value": "[parameters('nsgCount')]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
+    },
+    {
+      "name": "nsgSet3",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "nsg3"
+          },
+          "nsgCount": {
+              "value": "[parameters('nsgCount')]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
+    },
+    {
+      "name": "nsgSet4",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "nsg4"
+          },
+          "nsgCount": {
+              "value": "[parameters('nsgCount')]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
+    },
+    {
+      "name": "nsgSet5",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "nsg5"
+          },
+          "nsgCount": {
+              "value": "[parameters('nsgCount')]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
+    },
+    {
+      "name": "nsgSet6",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2016-09-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[parameters('_artifactsLocation')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nsgName": {
+              "value": "nsg6"
+          },
+          "nsgCount": {
+              "value": "[parameters('nsgCount')]"
+          },
+          "location": {
+              "value": "[resourceGroup().location]"
+          }
+        }
+      }
     }
     ]
   }

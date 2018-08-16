@@ -2,10 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "VMSSName": {
-        "type": "string",
-        "defaultValue": "vmss"
-      },
       "singlePlacementGroup": {
         "type": "bool",
         "defaultValue": true
@@ -19,7 +15,7 @@
       },
       "subnetId": {
         "type": "string",
-        "defaultValue": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/Test-Vnet02/providers/Microsoft.Network/virtualNetworks/TestVnet/subnets/default",
+        "defaultValue": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/TestVnet/providers/Microsoft.Network/virtualNetworks/Test-Vnet/subnets/default",
         "metadata": {
           "description": "Subnet where Scale Sets will deploy"
         }
@@ -49,7 +45,7 @@
       {
         "type": "Microsoft.Compute/virtualMachineScaleSets",
         "apiVersion": "2017-03-30",
-        "name": "[concat(copyIndex(),'vmss2', uniqueString(resourceGroup().id))]",
+        "name": "[concat(copyIndex(),'vmss1', uniqueString(resourceGroup().id))]",
         "location": "[resourceGroup().location]",
         "sku": {
           "name": "Standard_A1",
@@ -80,7 +76,7 @@
               }
             },
             "osProfile": {
-              "computerNamePrefix": "vmss2",
+              "computerNamePrefix": "vmss1",
               "adminUsername": "[parameters('adminUsername')]",
               "adminPassword": "[parameters('adminPassword')]"
             },
