@@ -4,7 +4,7 @@
     "parameters": {
       "saCount": {
         "type": "int",
-        "defaultValue": 1,
+        "defaultValue": 800,
         "minValue": 1,
         "maxValue": 800,
         "metadata": {

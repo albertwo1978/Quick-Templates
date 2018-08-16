@@ -1,0 +1,111 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "VMSSName": {
+        "type": "string",
+        "defaultValue": "vmss"
+      },
+      "singlePlacementGroup": {
+        "type": "bool",
+        "defaultValue": true
+      },
+      "instanceCount": {
+        "type": "int",
+        "defaultValue": 1,
+        "metadata": {
+          "description": "Number of instances in each Virtual Machine Scale Set"
+        }
+      },
+      "subnetId": {
+        "type": "string",
+        "defaultValue": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/Test-Vnet02/providers/Microsoft.Network/virtualNetworks/TestVnet/subnets/default",
+        "metadata": {
+          "description": "Subnet where Scale Sets will deploy"
+        }
+      },
+      "adminUsername": {
+        "type": "string",
+        "defaultValue": "catAdmin",
+        "metadata": {
+          "description": "Admin username"
+        }
+      },
+      "adminPassword": {
+        "type": "securestring"
+      },
+      "vmssCount": {
+        "type": "int",
+        "defaultValue": 800,
+        "minValue": 1,
+        "maxValue": 800,
+        "metadata": {
+          "description": "Number of single instance Virtual Machine Scale Sets created"
+        }
+      }
+    },
+    "variables": {},
+    "resources": [
+      {
+        "type": "Microsoft.Compute/virtualMachineScaleSets",
+        "apiVersion": "2017-03-30",
+        "name": "[concat(copyIndex(),'vmss2', uniqueString(resourceGroup().id))]",
+        "location": "[resourceGroup().location]",
+        "sku": {
+          "name": "Standard_A1",
+          "tier": "Standard",
+          "capacity": "[parameters('instanceCount')]"
+        },
+        "copy": {
+          "name": "vmssLoop",
+          "count": "[parameters('vmssCount')]"
+        },
+        "properties": {
+          "singlePlacementGroup": "[parameters('singlePlacementGroup')]",
+          "overprovision": "true",
+          "upgradePolicy": {
+            "mode": "Manual"
+          },
+          "virtualMachineProfile": {
+            "storageProfile": {
+              "osDisk": {
+                "createOption": "FromImage",
+                "caching": "ReadWrite"
+              },
+              "imageReference": {
+                "publisher": "Canonical",
+                "offer": "UbuntuServer",
+                "sku": "16.04-LTS",
+                "version": "latest"
+              }
+            },
+            "osProfile": {
+              "computerNamePrefix": "vmss2",
+              "adminUsername": "[parameters('adminUsername')]",
+              "adminPassword": "[parameters('adminPassword')]"
+            },
+            "networkProfile": {
+              "networkInterfaceConfigurations": [
+                {
+                  "name": "nic1",
+                  "properties": {
+                    "primary": "true",
+                    "ipConfigurations": [
+                      {
+                        "name": "ipconfig1",
+                        "properties": {
+                          "subnet": {
+                            "Id": "[parameters('subnetId')]"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    ]
+  }

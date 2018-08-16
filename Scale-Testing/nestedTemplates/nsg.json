@@ -6,7 +6,13 @@
       "nsgName": {
             "type": "string",
             "metadata": {
-              "description": "Storage Account Type"
+              "description": "Network Security Group base name"
+        }
+      },
+      "nsgCount": {
+        "type": "int",
+        "metadata": {
+          "description": "Number of NSGs deployed"
         }
       },
       "location": {
@@ -22,8 +28,12 @@
       {
         "apiVersion": "2015-05-01-preview",
         "type": "Microsoft.Network/networkSecurityGroups",
-        "name": "[parameters('nsgName')]",
+        "name": "[concat(copyIndex(), parameters('nsgName'), uniqueString(resourceGroup().id))]",
         "location": "[parameters('location')]",
+        "copy": {
+          "name": "nsgLoop",
+          "count": "[parameters('nsgCount')]"
+        },
         "properties": {
           "securityRules": [
             {
