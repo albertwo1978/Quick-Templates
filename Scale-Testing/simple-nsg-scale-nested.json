@@ -4,7 +4,7 @@
     "parameters": {
       "nsgCount": {
         "type": "int",
-        "defaultValue": 200,
+        "defaultValue": 800,
         "minValue": 1,
         "maxValue": 800,
         "metadata": {
