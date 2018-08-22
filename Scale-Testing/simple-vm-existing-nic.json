@@ -1,0 +1,76 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "catadmin"
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultValue": "Test-AGW01"
+        },
+        "networkInterfaceName": {
+            "type": "string",
+            "defaultValue": "alw-vm01805"
+        },
+        "diskSizeGB": {
+            "type": "string",
+            "defaultValue": "30"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "Password@1234!!"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": "apps"
+        }
+    },
+    "variables": {
+        "vnetId": "[resourceId('Test-AGW01','Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat('vm-', uniqueString(resourceGroup().id))]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-04-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [],
+            "properties": {
+                "osProfile": {
+                    "computerName": "[concat('vm-', uniqueString(resourceGroup().id))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1s"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "diskSizeGB": "[parameters('diskSizeGB')]",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
