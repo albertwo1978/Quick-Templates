@@ -1,0 +1,120 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmCount": {
+            "type": "int",
+            "defaultValue": 240,
+            "minValue": 1,
+            "maxValue": 800,
+            "metadata": {
+              "description": "Number of Virtual Machines created"
+            }
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultValue": "catadmin"
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultValue": "Test-AGW01"
+        },
+        "rgName": {
+            "type": "string",
+            "defaultValue": "Test-AGW01"
+        },     
+        "diskSizeGB": {
+            "type": "string",
+            "defaultValue": "30"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultValue": "Password@1234!!"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultValue": "apps"
+        }
+    },
+    "variables": {
+        "vnetId": "[resourceId(parameters('rgName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "interfaceId": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/Test-AGW01/providers/Microsoft.Network/networkInterfaces/"
+    },
+    "resources": [
+        {
+            "name": "[concat('vm-', copyIndex(), uniqueString(resourceGroup().id))]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2018-04-01",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "vmLoop",
+                "count": "[parameters('vmCount')]"
+              },
+              "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', 'nic-', copyIndex(), uniqueString(resourceGroup().id))]"
+              ],
+            "properties": {
+                "osProfile": {
+                    "computerName": "[concat('vm-', copyIndex(), uniqueString(resourceGroup().id))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "Standard_A1"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "createOption": "fromImage",
+                        "diskSizeGB": "[parameters('diskSizeGB')]",
+                        "managedDisk": {
+                            "storageAccountType": "Standard_LRS"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[concat(variables('interfaceId'), 'nic-', copyIndex(), uniqueString(resourceGroup().id))]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+          "name": "[concat('nic-', copyIndex(), uniqueString(resourceGroup().id))]",
+          "type": "Microsoft.Network/networkInterfaces",
+          "apiVersion": "2017-06-01",
+          "location": "[resourceGroup().location]",
+          "copy": {
+            "name": "nicLoop",
+            "count": "[parameters('vmCount')]"
+          },
+          "properties": {
+            "ipConfigurations": [
+              {
+                "name": "ipconfig1",
+                "properties": {
+                  "subnet": {
+                    "id": "[variables('subnetRef')]"
+                  },
+                  "applicationGatewayBackendAddressPools": [
+                    {
+                      "id": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/Test-AGW01/providers/Microsoft.Network/applicationGateways/alwagw/backendAddressPools/appGatewayBackendPool"
+                    }
+                  ],
+                  "privateIPAllocationMethod": "Dynamic"
+                }
+              }
+            ]
+          }
+        }
+    ]
+}

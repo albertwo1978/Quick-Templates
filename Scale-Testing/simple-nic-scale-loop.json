@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "nicCount": {
+        "type": "int",
+        "defaultValue": 240,
+        "minValue": 1,
+        "maxValue": 800,
+        "metadata": {
+          "description": "Number of NICs deployed"
+        }
+      }
+    },
+    "variables": {
+        "virtualNetworkName": "Test-AGW02",
+        "subnetName": "apps",
+        "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), variables('subnetName'))]"
+    },
+    "resources": [
+      {
+        "name": "[concat(copyIndex(),'nic1', uniqueString(resourceGroup().id))]",
+        "type": "Microsoft.Network/networkInterfaces",
+        "location": "[resourceGroup().location]",
+        "apiVersion": "2017-06-01",
+        "copy": {
+            "name": "nicLoop",
+            "count": "[parameters('nicCount')]"
+        },
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "subnet": {
+                  "id": "[variables('subnetRef')]"
+                },
+                "applicationGatewayBackendAddressPools": [
+                    {
+                      "id": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/Test-AGW02/providers/Microsoft.Network/applicationGateways/alwagw/backendAddressPools/appGatewayBackendPool"
+                    }
+                  ],
+                "privateIPAllocationMethod": "Dynamic"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
