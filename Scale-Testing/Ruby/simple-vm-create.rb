@@ -69,7 +69,7 @@ def run_example
 
   postfix = rand(1000)
 
-  subnet = network_client.subnets.get(VNET_RG, VNET_NAME, 'apps')
+  subnet = network_client.subnets.get(VNET_RG, VNET_NAME, SUBNET_NAME)
 
   vm = create_vm(compute_client, network_client, RG_LOC, 'firstvm', subnet)
 
