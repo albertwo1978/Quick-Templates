@@ -4,7 +4,7 @@
     "parameters": {
         "vmCount": {
             "type": "int",
-            "defaultValue": 2,
+            "defaultValue": 3,
             "minValue": 1,
             "maxValue": 800,
             "metadata": {
@@ -17,11 +17,11 @@
         },
         "virtualNetworkName": {
             "type": "string",
-            "defaultValue": "Test-AGW02"
+            "defaultValue": "kubernetes-the-hard-way"
         },
         "rgName": {
             "type": "string",
-            "defaultValue": "Test-AGW02"
+            "defaultValue": "Test-KTHW"
         },     
         "diskSizeGB": {
             "type": "string",
@@ -33,17 +33,17 @@
         },
         "subnetName": {
             "type": "string",
-            "defaultValue": "apps"
+            "defaultValue": "kubernetes"
         }
     },
     "variables": {
         "vnetId": "[resourceId(parameters('rgName'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "interfaceId": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/Test-AGW02/providers/Microsoft.Network/networkInterfaces/"
+        "interfaceId": "/subscriptions/b36cf445-7f7d-4787-ba80-0df72df30447/resourceGroups/Test-KTHW/providers/Microsoft.Network/networkInterfaces/"
     },
     "resources": [
         {
-            "name": "[concat('vm-', copyIndex(), uniqueString(resourceGroup().id))]",
+            "name": "[concat('worker-', copyIndex())]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-04-01",
             "location": "[resourceGroup().location]",
@@ -51,15 +51,17 @@
                 "name": "vmLoop",
                 "count": "[parameters('vmCount')]"
               },
-            "dependsOn": [],
+              "dependsOn": [
+                "[concat('Microsoft.Network/networkInterfaces/', 'worker-', copyIndex())]"
+              ],
             "properties": {
                 "osProfile": {
-                    "computerName": "[concat('vm-', copyIndex(), uniqueString(resourceGroup().id))]",
+                    "computerName": "[concat('worker-', copyIndex())]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
                 "hardwareProfile": {
-                    "vmSize": "Standard_A1"
+                    "vmSize": "Standard_A2"
                 },
                 "storageProfile": {
                     "imageReference": {
@@ -80,36 +82,34 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[concat(variables('interfaceId'), copyIndex(), 'nic1', uniqueString(resourceGroup().id))]"
+                            "id": "[concat(variables('interfaceId'), 'worker-', copyIndex())]"
                         }
                     ]
                 }
             }
         },
         {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat('vm-', copyIndex(), uniqueString(resourceGroup().id), '/apachescript')]",
-            "apiVersion": "2015-05-01-preview",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "extLoop",
-                "count": "[parameters('vmCount')]"
-            },
-            "dependsOn": [
-                "[concat('vm-', copyIndex(), uniqueString(resourceGroup().id))]"
-            ],
-            "properties": {
-            "publisher": "Microsoft.Azure.Extensions",
-            "type": "CustomScript",
-            "typeHandlerVersion": "2.0",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-                "fileUris": [
-                "https://raw.githubusercontent.com/albertwo1978/training-events/master/p20-arm/scripts/install_apache.sh"
-                ],
-                "commandToExecute": "sh install_apache.sh"
-            }
-            }
+          "name": "[concat('worker-', copyIndex())]",
+          "type": "Microsoft.Network/networkInterfaces",
+          "apiVersion": "2017-06-01",
+          "location": "[resourceGroup().location]",
+          "copy": {
+            "name": "nicLoop",
+            "count": "[parameters('vmCount')]"
+          },
+          "properties": {
+            "ipConfigurations": [
+              {
+                "name": "ipconfig1",
+                "properties": {
+                  "subnet": {
+                    "id": "[variables('subnetRef')]"
+                  },
+                  "privateIPAllocationMethod": "Dynamic"
+                }
+              }
+            ]
+          }
         }
     ]
 }
