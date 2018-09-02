@@ -10,12 +10,13 @@ require 'azure_mgmt_compute'
 # SUBNET_NAME = 'melisub'
 
 RG_LOC = ARGV[0]
-NIC_RG = ARGV[1]
-NIC_NAME_ROOT = ARGV[2]
-IMAGE_RG = ARGV[3]
-IMAGE_NAME =ARGV[4]
-VM_COUNT = ARGV[5].to_i
-GROUP_NAME = ARGV[6]
+VNET_RG = ARGV[1]
+VNET_NAME = ARGV[2]
+SUBNET_NAME = ARGV[3]
+IMAGE_RG = ARGV[4]
+IMAGE_NAME =ARGV[5]
+VM_COUNT = ARGV[6].to_i
+GROUP_NAME = ARGV[7]
 
 Storage = Azure::Storage::Profiles::Latest::Mgmt
 Network = Azure::Network::Profiles::Latest::Mgmt
@@ -54,6 +55,9 @@ ResourceModels = Resources::Models
     puts "\n\n"
   end
 
+  # Grab network data for creating network interface
+  print_item subnet = network_client.subnets.get(VNET_RG, VNET_NAME, SUBNET_NAME)
+
   start = Time.now
   count = 0
   arr = []
@@ -66,8 +70,20 @@ ResourceModels = Resources::Models
          count += 1
          vm_name= "testvm#{number}"
 
-# Grab existing network interface
-print_item nic = network_client.network_interfaces.get(NIC_RG, "#{number}#{NIC_NAME_ROOT}")
+  print_item nic = network_client.network_interfaces.create_or_update(
+    GROUP_NAME,
+    "sample-ruby-nic-#{number}",
+    NetworkModels::NetworkInterface.new.tap do |interface|
+        interface.location = RG_LOC
+        interface.ip_configurations = [
+            NetworkModels::NetworkInterfaceIPConfiguration.new.tap do |nic_conf|
+                nic_conf.name = "nic-#{number}"
+                nic_conf.private_ipallocation_method = NetworkModels::IPAllocationMethod::Dynamic
+                nic_conf.subnet = subnet
+            end
+        ]
+    end
+  )
 
 vm_create_params = ComputeModels::VirtualMachine.new.tap do |vm|
     vm.location = RG_LOC
