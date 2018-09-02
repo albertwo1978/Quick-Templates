@@ -1,0 +1,7 @@
+# Commands:
+
+ruby vm-create-with-nic-loop.rb <AZURE_REGION> <EXISTING_VNET_RG> <EXISTING_VNET_NAME> <EXISTING_SUBNET> <NUMBER_TO_DEPLOY> <TARGET_RG>
+
+ruby vm-create-existing-nic-loop.rb <AZURE_REGION> <EXISTING_NIC_RG> <EXISTING_NIC_ROOT_NAME> <NUMBER_TO_DEPLOY> <TARGET_RG>
+
+ruby vm-create-existing-nic-custom-image-loop.rb <AZURE_REGION> <EXISTING_NIC_RG> <EXISTING_NIC_ROOT_NAME> <CUSTOM_IMAGE_NAME> <NUMBER_TO_DEPLOY> <TARGET_RG>

@@ -3,13 +3,17 @@ require 'azure_mgmt_network'
 require 'azure_mgmt_storage'
 require 'azure_mgmt_compute'
 
+# RG_LOC = 'eastus2'
+# GROUP_NAME = 'melitest'
+# VNET_RG = 'melinet'
+# VNET_NAME = 'melinet'
+# SUBNET_NAME = 'melisub'
 
-RG_LOC = 'eastus2'
-GROUP_NAME = 'melitest'
-VNET_RG = 'melinet'
-VNET_NAME = 'melinet'
-SUBNET_NAME = 'melisub'
-
+RG_LOC = ARGV[0]
+NIC_RG = ARGV[1]
+NIC_NAME_ROOT = ARGV[2]
+VM_COUNT = ARGV[3].to_i
+GROUP_NAME = ARGV[4]
 
 Storage = Azure::Storage::Profiles::Latest::Mgmt
 Network = Azure::Network::Profiles::Latest::Mgmt
@@ -48,32 +52,21 @@ ResourceModels = Resources::Models
     puts "\n\n"
   end
 
-  
-  subnet = network_client.subnets.get(VNET_RG, VNET_NAME, SUBNET_NAME)
-
+  start = Time.now
   count = 0
   arr = []
   
-  2.times do |i|
+  # Loop creates number of VMs based on VM_COUNT input 
+  VM_COUNT.times do |i|
       arr[i] = Thread.new {
          Thread.current["mycount"] = count
          number = count
          count += 1
          vm_name= "testvm#{number}"
-  print_item nic = network_client.network_interfaces.create_or_update(
-    GROUP_NAME,
-    "sample-ruby-nic-#{number}",
-    NetworkModels::NetworkInterface.new.tap do |interface|
-        interface.location = RG_LOC
-        interface.ip_configurations = [
-            NetworkModels::NetworkInterfaceIPConfiguration.new.tap do |nic_conf|
-                nic_conf.name = "nic-#{number}"
-                nic_conf.private_ipallocation_method = NetworkModels::IPAllocationMethod::Dynamic
-                nic_conf.subnet = subnet
-            end
-        ]
-    end
-)
+
+# Grab network data for creating network interface
+print_item nic = network_client.network_interfaces.get(NIC_RG, "#{number}#{NIC_NAME_ROOT}")
+
 vm_create_params = ComputeModels::VirtualMachine.new.tap do |vm|
     vm.location = RG_LOC
     vm.os_profile = ComputeModels::OSProfile.new.tap do |os_profile|
@@ -95,7 +88,7 @@ vm_create_params = ComputeModels::VirtualMachine.new.tap do |vm|
         end
     end
     vm.hardware_profile = ComputeModels::HardwareProfile.new.tap do |hardware|
-        hardware.vm_size = ComputeModels::VirtualMachineSizeTypes::StandardDS2V2
+        hardware.vm_size = ComputeModels::VirtualMachineSizeTypes::StandardA2
     end
     vm.network_profile = ComputeModels::NetworkProfile.new.tap do |net_profile|
         net_profile.network_interfaces = [
@@ -108,9 +101,14 @@ vm_create_params = ComputeModels::VirtualMachine.new.tap do |vm|
 end
 
 print_item vm = compute_client.virtual_machines.create_or_update(GROUP_NAME, "sample-ruby-vm-#{vm_name}", vm_create_params)
-    vm
 
-    }
+# Quick calculation on how long it took to deploy VMs.
+finish = Time.now
+puts "Time elapsed: #{((finish - start)/60).truncate(2)} minutes have passed."
+puts
+
+}
 end
+
 arr.each {|t| t.join; print t["mycount"], ", " }
 puts "count = #{count}"
