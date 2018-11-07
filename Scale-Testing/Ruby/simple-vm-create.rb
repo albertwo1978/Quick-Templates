@@ -79,9 +79,9 @@ def run_example
   gets
 
   # Delete Resource group and everything in it
-  puts 'Delete Resource Group'
-  resource_client.resource_groups.delete(GROUP_NAME)
-  puts "\nDeleted: #{GROUP_NAME}"
+  #puts 'Delete Resource Group'
+  #resource_client.resource_groups.delete(GROUP_NAME)
+  #puts "\nDeleted: #{GROUP_NAME}"
 
 end
 
